@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <title>plugin</title>
+    <link rel="stylesheet" href="css/themes/bootstrap/easyui.css">
+    <link rel="stylesheet" href="css/themes/icon.css">
+    <link rel="stylesheet" href="css/plugin.css">
+    <style>
+        #timeline-container {
+            margin-left: 10px;
+        }
+    </style>
+
+</head>
+<body>
+<div id="timeline-container"></div>
+<div id="time" style="margin-top: 200px;position: absolute;">
+    <h1>现在的时间</h1>
+    <label></label>
+    <span></span>
+</div>
+<script type="text/javascript" src="js/jquery-2.2.0.min.js"></script>
+<script type="text/javascript" src="js/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="js/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="js/plugin.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $("#timeline-container").dateTimeMove({
+            afterDrag: function () {
+                console.log("拖拽结束");
+                var s = $("#timeline-container").dateTimeMove("getCurrentTime")
+                console.log("拖拽结束后的日期:" + s.currentDate + "  " + s.currentHour)
+            },
+            dateChange: function () {
+                console.log("日期改变");
+            },
+            hourChange: function () {
+                console.log("小时改变")
+            }
+        });
+        var s = $("#timeline-container").dateTimeMove("getCurrentTime")
+        console.log(s);
+
+    })
+</script>
+</body>
+</html>
