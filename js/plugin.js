@@ -212,7 +212,6 @@
                 var d = e.data;
                 var hour = parseInt((d.left + $(d.target).width()) / options.bar.scales) - 1;// 控件，处理为小时
                 hour = hour == -1 ? 0 : hour;
-                $("#time span").html(hour);
                 globe.currentHour = hour;
                 options.afterDrag();
             }
@@ -279,7 +278,6 @@
                 d = parseInt($pointer.css('left'));
                 var hour = parseInt((d + $pointer.width()) / options.bar.scales) - 1;// 控件，处理为小时
                 hour = hour == -1 ? 0 : hour;
-                $("#time span").html(hour);
                 globe.currentDate = hour;
                 options.hourChange();
             });
@@ -304,7 +302,6 @@
                 d = parseInt($pointer.css('left'));
                 var hour = parseInt((d + $pointer.width()) / options.bar.scales) - 1;// 控件，处理为小时
                 hour = hour == -1 ? 0 : hour;
-                $("#time span").html(hour);
                 globe.currentDate = hour;
                 options.hourChange();
             });
@@ -330,7 +327,6 @@
                 d = parseInt($pointer.css('left'));
                 var hour = parseInt((d + $pointer.width()) / options.bar.scales) - 1;// 控件，处理为小时
                 hour = hour == -1 ? 0 : hour;
-                $("#time span").html(hour);
                 globe.currentDate = hour;
                 options.hourChange();
             });
@@ -345,14 +341,11 @@
     function initData($this, options) {
         globe.currentDate = options.initDate;
         globe.currentHour = options.initHour;
-        $("#time label").html(options.initDate);
-        $("#time span").html(options.initHour);
         $($this.find("#dd")).datebox({
             value: options.initDate
         }).datebox({
             onSelect: function () {
                 globe.currentDate = $(this).datebox("getValue");
-                $("#time label").html($(this).datebox("getValue"));
                 options.dateChange();
             }
         });
