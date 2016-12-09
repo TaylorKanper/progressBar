@@ -54,6 +54,18 @@
                 currentHour: globe.currentHour
             };
             return time;
+        },
+        setCurrentTime: function (param) {
+            globe.currentDate = param.currentDate;
+            globe.currentHour = param.currentHour;
+            var $this = $(this);
+            var $pointer = $this.find("#pointer");
+            var itemWidth = parseInt($this.find(".progress-scale li").eq(0).css('left')) + 1;
+            var d = (param.currentHour + 1) * itemWidth - $pointer.width() / 2;
+            $pointer.css({
+                left: d
+            });
+            $this.find("#dd").datebox("setValue", param.currentDate);
         }
     };
 
@@ -132,26 +144,31 @@
             width: options.dateDivWidth
         });
         $this.find(".progress-container").css({
-            width: options.progressWidth
+            width: options.progressWidth,
+            height: '100%'
         });
         var $bar = $this.find(".progress-bar");
         $bar.css({
-            width: options.progressWidth
+            width: '100%'
         });
         var scales = $this.find(".progress-scale").find("li");
+        var barWidth = $this.find(".progress-bar").width();
+        var itemWidth = parseInt(barWidth / (scales.length + 1));
+        // 将计算出的刻度值赋予全局
+        options.bar.scales = itemWidth;
         // 获取刻度线的边框宽度
-        var borderWidth =1;
+        var borderWidth = 1;
         for (var i = 0, len = scales.length; i < len; i++) {
             if (i % 3 == 0) {
-                $(scales[i]).css({left: options.bar.scales * (i + 1)  - borderWidth, height: 20});
+                $(scales[i]).css({left: itemWidth * (i + 1) - borderWidth, height: 20});
             }
-            $(scales[i]).css({left: options.bar.scales * (i + 1) - borderWidth});
+            $(scales[i]).css({left: itemWidth * (i + 1) - borderWidth});
         }
 
         var hours = $this.find(".progress-time").find("li");
-        $(hours[0]).css({left: options.bar.scales - 21}).html(options.bar.scalesHours[0]);
+        $(hours[0]).css({left: itemWidth - $(hours[0]).width() / 2 - 1}).html(options.bar.scalesHours[0]);
         for (var i = 1, len = hours.length; i < len; i++) {
-            $(hours[i]).css({left: options.bar.scalesHourLeft * i + 8}).html(options.bar.scalesHours[i]);
+            $(hours[i]).css({left: itemWidth * ( i * 3 + 1) - $(hours[i]).width() / 2 - 1}).html(options.bar.scalesHours[i]);
         }
 
         var $point = $this.find(".progress-pointer");
@@ -178,8 +195,8 @@
                     d.left = 0
                 }
 
-                if (d.left + $(d.target).outerWidth() >= $(d.parent).width()) {
-                    d.left = $(d.parent).width() - $(d.target).outerWidth();
+                if (d.left + $(d.target).outerWidth() >= $(d.parent).width() - options.bar.scales) {
+                    d.left = $(d.parent).width() - $(d.target).outerWidth() - options.bar.scales;
                 }
                 d.left = repair(d.left) - $(d.target).outerWidth() / 2;
                 function repair(v) {
@@ -253,11 +270,10 @@
      */
     function movePointAuto($this, options) {
         var $pointer = $this.find("#pointer");
-        var $container = $this.find(".progress-container");
         $pointer.stop(false, true);
         var d = parseInt($pointer.css('left')); //获取滑块距离左边的距离
-        if (d >= $container.width() - options.bar.scales - $pointer.width() / 2) {
-            $pointer.css({left: - $pointer.width() / 2});
+        if (d >= 24 * options.bar.scales - $pointer.width()) {
+            $pointer.css({left: -$pointer.width() / 2});
         } else {
             $pointer.animate({left: d + options.bar.scales}, options.animateTime, function () {
                 d = parseInt($pointer.css('left'));
@@ -383,7 +399,7 @@
         };
 
         var lastOptions = $.extend({}, defaults, options);
-        // 如果是字符串
+
         if (methods[options]) {
             return methods[options].apply(this, Array.prototype.slice.call(arguments, 1));
         } else if (typeof options === 'object' || !options) {
