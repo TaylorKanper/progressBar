@@ -80,7 +80,7 @@
             height: options.height,
             backgroundColor: options.backgroundColor
         });
-        var btn = "<div id='play'><img src='icons/bf.png'><span>播放</span></div><div id='nex'><img src='icons/xyg.png'><span>下一个</span></div>";
+        var btn = "<div id='play'><div></div><span>播放</span></div><div id='nex'><div></div><span>下一个</span></div>";
         $(btn).appendTo($this);
 
 
@@ -110,7 +110,7 @@
         }
         y += "</ul>";
         $(y).appendTo($this.find(".progress-container"));
-        btn = "<div id='pre'><img src='icons/syg.png'><span>上一个</span></div>";
+        btn = "<div id='pre'><div></div><span>上一个</span></div>";
         $(btn).appendTo($this);
 
     }
@@ -224,7 +224,7 @@
      * @param options
      */
     function bindEvent($this, options) {
-        $this.find("#play img").bind("click", function () {
+        $this.find("#play div").bind("click", function () {
             var $play = $this.find("#play");
             var $pointer = $this.find("#pointer");
             var $container = $this.find(".progress-container");
@@ -238,7 +238,7 @@
                 $pre.unbind("click");
                 $nex.unbind("click");
                 $play.find("span").text("暂停");
-                $play.find("img").attr("src", "icons/zt.png");
+                $play.find("div").css("background", "url(../icons/zt.png) no-repeat");
                 $pointer.draggable("disable");
 
                 var timeInt = setInterval(function () {
@@ -246,17 +246,17 @@
                 }, options.stepTime);
                 globe.int = timeInt;
             } else {
-                $play.find("img").attr("src", "icons/bf.png");
+                $play.find("div").css("background", "url(../icons/bf.png) no-repeat");
                 $play.find("span").text("播放");
                 clearInterval(globe.int);
                 $pointer.draggable("enable");
             }
             options.afterClickPlay(); // 插件使用者点击播放的事件
         });
-        $this.find("#nex img").bind("click", function () {
+        $this.find("#nex div").bind("click", function () {
             movePointRight($this, options)
         });
-        $this.find("#pre img").bind("click", function () {
+        $this.find("#pre div").bind("click", function () {
             movePointLeft($this, options)
         });
 

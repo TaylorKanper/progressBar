@@ -15,10 +15,11 @@ span.datebox input[type='text'] {
 
 /*******************************************/
 
-.dateTimeMove-container img:hover {
+.dateTimeMove-container #play:hover, .dateTimeMove-container #pre:hover, .dateTimeMove-container #nex:hover {
     cursor: pointer;
 }
-.dateTimeMove-container span{
+
+.dateTimeMove-container span {
     font-family: 微软雅黑;
     color: #ffffff;
 }
@@ -38,10 +39,13 @@ span.datebox input[type='text'] {
     margin-left: 20px;
 }
 
-.dateTimeMove-container #play img {
+.dateTimeMove-container #play div {
     display: block;
     margin: auto;
     padding-top: 10px;
+    width: 38px;
+    height: 39px;
+    background: url(../icons/bf.png) no-repeat;
 }
 
 .dateTimeMove-container #play span {
@@ -64,10 +68,13 @@ span.datebox input[type='text'] {
     padding-bottom: 10px;
 }
 
-.dateTimeMove-container #nex img {
+.dateTimeMove-container #nex div {
     display: block;
     margin: auto;
     padding-top: 10px;
+    width: 38px;
+    height: 39px;
+    background: url(../icons/xyg.png) no-repeat;
 }
 
 .dateTimeMove-container #nex span {
@@ -90,10 +97,13 @@ span.datebox input[type='text'] {
     padding-bottom: 10px;
 }
 
-.dateTimeMove-container #pre img {
+.dateTimeMove-container #pre div {
     display: block;
     margin: auto;
     padding-top: 10px;
+    width: 38px;
+    height: 39px;
+    background: url(../icons/syg.png) no-repeat;
 }
 
 .dateTimeMove-container #pre span {
