@@ -292,8 +292,8 @@
      */
     function movePointLeft($this, options) {
         var $pointer = $this.find("#pointer");
-        var d = parseInt($pointer.css('left'));
         $pointer.stop(false, true);
+        var d = parseInt($pointer.css('left'));
 
         if (d <= options.bar.scales - $pointer.width() / 2) {
             return false;
