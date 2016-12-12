@@ -238,7 +238,7 @@
                 $pre.unbind("click");
                 $nex.unbind("click");
                 $play.find("span").text("暂停");
-                $play.find("div").css("background", "url(../icons/zt.png) no-repeat");
+                $play.find("div").css("background", "url(icons/zt.png) no-repeat");
                 $pointer.draggable("disable");
 
                 var timeInt = setInterval(function () {
@@ -246,7 +246,7 @@
                 }, options.stepTime);
                 globe.int = timeInt;
             } else {
-                $play.find("div").css("background", "url(../icons/bf.png) no-repeat");
+                $play.find("div").css("background", "url(icons/bf.png) no-repeat");
                 $play.find("span").text("播放");
                 clearInterval(globe.int);
                 $pointer.draggable("enable");
@@ -278,7 +278,7 @@
                 d = parseInt($pointer.css('left'));
                 var hour = parseInt((d + $pointer.width()) / options.bar.scales) - 1;// 控件，处理为小时
                 hour = hour == -1 ? 0 : hour;
-                globe.currentDate = hour;
+                globe.currentHour = hour;
                 options.hourChange();
             });
         }
@@ -302,7 +302,7 @@
                 d = parseInt($pointer.css('left'));
                 var hour = parseInt((d + $pointer.width()) / options.bar.scales) - 1;// 控件，处理为小时
                 hour = hour == -1 ? 0 : hour;
-                globe.currentDate = hour;
+                globe.currentHour = hour;
                 options.hourChange();
             });
         }
@@ -327,7 +327,7 @@
                 d = parseInt($pointer.css('left'));
                 var hour = parseInt((d + $pointer.width()) / options.bar.scales) - 1;// 控件，处理为小时
                 hour = hour == -1 ? 0 : hour;
-                globe.currentDate = hour;
+                globe.currentHour = hour;
                 options.hourChange();
             });
         }
