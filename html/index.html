@@ -9,42 +9,19 @@
 </head>
 <body>
 <div id="ha"></div>
+<button id="btn">获取当前时间</button>
 <script type="text/javascript" src="../js/jquery-2.2.0.min.js"></script>
 <script type="text/javascript" src="../js/jquery.easyui.min.js"></script>
 <script type="text/javascript" src="../js/locale/easyui-lang-zh_CN.js"></script>
 <script type="text/javascript" src="../js/plugin.js"></script>
 <script>
-    $("#ha").dateTimeMove({
-        width: '100%',                         // 容器宽度
-        height: 100,                        // 容器高度
-        backgroundColor: '',            // 容器背景颜色
-        timeCount: 24,                         // 时间显示个数
-        initDate: '2016-12-05',                // 初始化时间
-        initHour: 5,                           // 初始化小时
-        dateDivWidth: 180,                     // 日期控件div宽度
-        item: {
-            width: '80',                      // 按钮控件的宽度
-            height: '80'                       // 按钮控件的高度
-        },
-        progressWidth: '65%',                    // 进度条宽度
-        bar: {
-            scales: 30,                        // 刻度值长度
-            scalesHours: ['00:00', '03:00', '06:00', '09:00', '12:00', '15:00', '18:00', '21:00'],             //控件下面的字
-            scalesHourLeft: 90                 // 控件下面的字的间距
-        },
-        stepTime: 1000,                        // 播放的间隔时间
-        animateTime: 'slow',                   // 动画长短，支持毫秒和字符串
-        afterDrag: function () {
-        },                                     // 在拖拽结束后执行的事件
-        afterClickPlay: function () {
-        },                                     // 在点击播放时执行的事件
-        dateChange: function () {
+    $("#ha").dateTimeMove();
 
-        },                                     // 选择日期事件
-        hourChange: function () {
-        }                                      // 小时改变事件
+    $("#btn").bind('click', function () {
+        var s = $("#ha").dateTimeMove("getCurrentTime");
+        alert("当前日期：" + s.currentDate + "  当前时间：" + s.currentTime);
+    })
 
-    });
 </script>
 </body>
 </html>

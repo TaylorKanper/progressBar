@@ -6,16 +6,16 @@
     <link rel="stylesheet" href="css/themes/bootstrap/easyui.css">
     <link rel="stylesheet" href="css/themes/icon.css">
     <link rel="stylesheet" href="css/plugin.css">
-
+    <style>
+        #timeline-container {
+            background-color: #d7dfe4;
+        }
+    </style>
 
 </head>
 <body>
 <div id="timeline-container"></div>
-<div id="time" style="margin-top: 200px;position: absolute;">
-    <h1>现在的时间</h1>
-    <label></label>
-    <span></span>
-</div>
+
 <button id="aaa">获取当前时间</button>
 <button id="bbb">设置时间</button>
 <script type="text/javascript" src="js/jquery-2.2.0.min.js"></script>
@@ -25,18 +25,22 @@
 <script type="text/javascript">
     $(function () {
         $("#timeline-container").dateTimeMove({
-            width: '100%',                         // 容器宽度
-            height: 100,                        // 容器高度
-            backgroundColor: '',            // 容器背景颜色
+            width: 180,                         // 容器宽度
+            height: 600,                             // 容器高度
+            arrangeType: 'v',
+            backgroundColor: '',                    // 容器背景颜色
             timeCount: 24,                         // 时间显示个数
             initDate: '2016-12-05',                // 初始化时间
             initHour: 5,                           // 初始化小时
             dateDivWidth: 180,                     // 日期控件div宽度
             item: {
-                width: '80',                      // 按钮控件的宽度
+                width: '50',                      // 按钮控件的宽度
                 height: '80'                       // 按钮控件的高度
             },
-            progressWidth: '65%',                    // 进度条宽度
+            progress: {
+                width: '100%',
+                height: '75%'
+            },                                     // 进度条宽度
             bar: {
                 scales: 30,                        // 刻度值长度
                 scalesHours: ['00:00', '03:00', '06:00', '09:00', '12:00', '15:00', '18:00', '21:00'],             //控件下面的字
@@ -57,14 +61,9 @@
         });
         $("#aaa").click(function () {
             var s = $("#timeline-container").dateTimeMove("getCurrentTime");
-            window.alert("日期：" + s.currentDate + "    小时：" + s.currentHour);
+            window.alert("日期：" + s.currentDate + "    时间：" + s.currentTime);
             console.log(s);
         })
-        $("#bbb").click(function () {
-            $("#timeline-container").dateTimeMove("setCurrentTime", {currentDate: '2016-12-09', currentHour: 9})
-            window.alert("日期设置为：2016-12-09 小时：9");
-        })
-
 
     })
 </script>

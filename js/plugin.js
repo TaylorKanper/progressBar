@@ -15,7 +15,7 @@
     var globe = {
         int: 0,
         currentDate: '',
-        currentHour: 0
+        currentTime: 0
     };
     /**
      * 全局方法
@@ -24,11 +24,13 @@
     var methods = {
         init: function (options) {
             return this.each(function () {
-                createDom($(this), options);
-                adjustDom($(this), options);
-                dragPoint($(this), options);
-                bindEvent($(this), options);
-                initData($(this), options);
+                if (options.arrangeType == 'h') {
+                    createDom($(this), options);
+                    adjustDom($(this), options);
+                    dragPoint($(this), options);
+                    bindEvent($(this), options);
+                    initData($(this), options);
+                }
             })
         },
         destroy: function () {
@@ -46,18 +48,19 @@
 
         },
         update: function (obj, options) {
-            console.log(options);
+
         },
         getCurrentTime: function () {
             var time = {
                 currentDate: globe.currentDate,
-                currentHour: globe.currentHour
+                currentTime: globe.currentTime
             };
             return time;
         },
         setCurrentTime: function (param) {
             globe.currentDate = param.currentDate;
-            globe.currentHour = param.currentHour;
+
+            globe.currentTime = param.currentTime;
             var $this = $(this);
             var $pointer = $this.find("#pointer");
             var itemWidth = parseInt($this.find(".progress-scale li").eq(0).css('left')) + 1;
@@ -69,49 +72,55 @@
         }
     };
 
+
     /**
      * 生成dom
      * @param $this jquery对象
      * @param options 配置参数
      */
     function createDom($this, options) {
-        $this.addClass("dateTimeMove-container").css({
+        $this.addClass("dateTimeMove-horizontal-container").css({
             width: options.width,
             height: options.height,
             backgroundColor: options.backgroundColor
         });
-        var btn = "<div id='play'><div></div><span>播放</span></div><div id='nex'><div></div><span>下一个</span></div>";
-        $(btn).appendTo($this);
+        var control = "<div class='horizontal-control-div'></div>";
+        var $control = $(control).appendTo($this);
+
+        var e = "<div id='mm' class='control-dateBox'><input id='dd'></div>";
+        $(e).appendTo($control);
+
+        $this.find("#mm #dd").datebox({value: options.initDate});
+
+        var btn = "<div class='control-btn'><div id='play' class='horizontal-play'><i class='horizontal-play-div'></i><span>播放</span></div>" +
+            "<div id='pre' class='horizontal-pre'><i></i><span>上一个</span></div>" +
+            "<div id='nex' class='horizontal-nex'><i></i><span>下一个</span></div></div>";
+        $(btn).appendTo($control);
 
 
-        var e = "<div id='mm'><input id='dd'></div>";
-        $(e).appendTo($this);
-
-        var s = "<div class='progress-container'></div>";
+        var s = "<div class='horizontal-progress-container'></div>";
         $(s).appendTo($this);
 
-        var o = "<div id='pointer'  class='progress-pointer'></div>";
-        $(o).appendTo($this.find(".progress-container"));
+        var o = "<div id='pointer'  class='horizontal-progress-pointer'></div>";
+        $(o).appendTo($this.find(".horizontal-progress-container"));
 
-        var t = "<div class='progress-bar'></div>";
-        $(t).appendTo($this.find(".progress-container"));
+        var t = "<div class='horizontal-progress-bar'></div>";
+        $(t).appendTo($this.find(".horizontal-progress-container"));
 
 
-        var x = "<ul class='progress-scale'>";
-        for (var i = 0, len = options.timeCount; i < len; i++) {
-            x += "<li></li>";
+        var x = "<ul class='horizontal-progress-scale'>";
+        var min = options.scaleRange[0], max = options.scaleRange[1];
+        var scaleValue = (max - min) / options.scaleCount
+        for (var i = 0, len = options.scaleCount; i < len; i++) {
+            if (i % options.groupCount == 0) {
+                x += "<li><span>" + (options.scaleRange[0] + i * scaleValue) + "</span></li>"
+            } else {
+                x += "<li></li>";
+            }
         }
         x += "</ul>";
-        $(x).appendTo($this.find(".progress-container"));
+        $(x).appendTo($this.find(".horizontal-progress-container"));
 
-        var y = "<ul class='progress-time'>";
-        for (var i = 0, len = options.bar.scalesHours.length; i < len; i++) {
-            y += "<li></li>";
-        }
-        y += "</ul>";
-        $(y).appendTo($this.find(".progress-container"));
-        btn = "<div id='pre'><div></div><span>上一个</span></div>";
-        $(btn).appendTo($this);
 
     }
 
@@ -121,41 +130,32 @@
      * @param options
      */
     function adjustDom($this, options) {
-        $this.find("#play").css({
-            width: options.item.width
-        }).find("span").css({
-            width: options.item.width / 2
-        });
-
-
-        $this.find("#nex").css({
-            width: options.item.width
-        }).find("span").css({
-            width: options.item.width / 2
-        });
-
-        $this.find("#pre").css({
-            width: options.item.width
-        }).find("span").css({
-            width: options.item.width / 2
-        });
+        var dateBoxWidth = $("#dd").datebox("options").panelWidth;
+        var containerWidth = $this.width();
+        var containerHeight = $this.height();
 
         $this.find("#mm").css({
-            width: options.dateDivWidth
+            width: dateBoxWidth
         });
-        $this.find(".progress-container").css({
-            width: options.progressWidth,
-            height: '100%'
+        $this.find(".horizontal-control-div").css({
+            height: containerHeight - 10
         });
-        var $bar = $this.find(".progress-bar");
-        $bar.css({
-            width: '100%'
+        var $barContainer = $this.find(".horizontal-progress-container").css({
+            width: containerWidth - 240 - 10 * 2 - 5 * 2,   // 减去左边容器的宽度，左容器和右容器的内边距
+            height: containerHeight - 20                    // 减去上下内边距
         });
-        var scales = $this.find(".progress-scale").find("li");
-        var barWidth = $this.find(".progress-bar").width();
-        var itemWidth = parseInt(barWidth / (scales.length + 1));
+        var barContainerWidth = $barContainer.width();
+        $this.find(".horizontal-progress-bar").css({
+            width: barContainerWidth,
+            top: containerHeight / 2 - 10
+        });
+        var scales = $this.find(".horizontal-progress-scale").css({
+            top: containerHeight / 2
+        }).find("li");
+
+        var itemWidth = parseInt(barContainerWidth / (scales.length + 1));
         // 将计算出的刻度值赋予全局
-        options.bar.scales = itemWidth;
+        options.scalesWidth = itemWidth;
         // 获取刻度线的边框宽度
         var borderWidth = 1;
         for (var i = 0, len = scales.length; i < len; i++) {
@@ -164,17 +164,10 @@
             }
             $(scales[i]).css({left: itemWidth * (i + 1) - borderWidth});
         }
-
-        var hours = $this.find(".progress-time").find("li");
-        $(hours[0]).css({left: itemWidth - $(hours[0]).width() / 2 - 1}).html(options.bar.scalesHours[0]);
-        for (var i = 1, len = hours.length; i < len; i++) {
-            $(hours[i]).css({left: itemWidth * ( i * 3 + 1) - $(hours[i]).width() / 2 - 1}).html(options.bar.scalesHours[i]);
-        }
-
-        var $point = $this.find(".progress-pointer");
+        var $point = $this.find(".horizontal-progress-pointer");
         $point.css({
-            left: options.bar.scales - $point.width() / 2,
-            top: 15,
+            left: options.scalesWidth - $point.width() / 2 + 10,//加上内边距的值
+            top: containerHeight / 2 - 10 - 5,
             'z-index': 1
         })
     }
@@ -191,18 +184,18 @@
             axis: 'h',
             onDrag: function (e) {
                 var d = e.data;
-                if (d.left < 0) {
-                    d.left = 0
+                if (d.left < options.scalesWidth - 10) {//减去滑块的宽度一半
+                    d.left = options.scalesWidth - 10
                 }
 
-                if (d.left + $(d.target).outerWidth() >= $(d.parent).width() - options.bar.scales) {
-                    d.left = $(d.parent).width() - $(d.target).outerWidth() - options.bar.scales;
+                if (d.left > options.scalesWidth * options.scaleCount) {
+                    d.left = options.scalesWidth * options.scaleCount;
                 }
-                d.left = repair(d.left) - $(d.target).outerWidth() / 2;
+                d.left = repair(d.left);
                 function repair(v) {
-                    var r = parseInt(v / options.bar.scales) * options.bar.scales;
-                    if (Math.abs(v % options.bar.scales) > 10) {
-                        r += v > 0 ? options.bar.scales : -options.bar.scales;
+                    var r = parseInt(v / options.scalesWidth) * options.scalesWidth;
+                    if (Math.abs(v % options.scalesWidth) > 10) {
+                        r += v > 0 ? options.scalesWidth : -options.scalesWidth;
                     }
                     return r;
                 }
@@ -210,9 +203,13 @@
 
             onStopDrag: function (e) {
                 var d = e.data;
-                var hour = parseInt((d.left + $(d.target).width()) / options.bar.scales) - 1;// 控件，处理为小时
-                hour = hour == -1 ? 0 : hour;
-                globe.currentHour = hour;
+                var time = parseInt((d.left + $(d.target).width()) / options.scalesWidth) - 1;// 控件，处理为小时
+                time = time == -1 ? 0 : time;
+
+                var divisionVal = (options.scaleRange[1] - options.scaleRange[0]) / options.scaleCount;
+
+                globe.currentTime = options.scaleRange[0] + time * divisionVal;
+                options.hourChange();
                 options.afterDrag();
             }
         });
@@ -224,39 +221,33 @@
      * @param options
      */
     function bindEvent($this, options) {
-        $this.find("#play div").bind("click", function () {
+        $this.find("#play i").bind("click", function () {
             var $play = $this.find("#play");
             var $pointer = $this.find("#pointer");
-            var $container = $this.find(".progress-container");
             var $pre = $this.find("#pre");
             var $nex = $this.find("#nex");
             if ($play.find("span").text() == "播放") {
-                // 当滑块超过右边
-                if (parseInt($pointer.css('left')) >= $container.width() - options.bar.scales - $pointer.width() / 2) {
-                    $pointer.css({left: options.bar.scales - $pointer.width() / 2});
-                }
                 $pre.unbind("click");
                 $nex.unbind("click");
                 $play.find("span").text("暂停");
-                $play.find("div").css("background", "url(icons/zt.png) no-repeat");
+                $play.find("i").toggleClass('horizontal-play-div horizontal-pause-div');
                 $pointer.draggable("disable");
-
                 var timeInt = setInterval(function () {
                     movePointAuto($this, options)
                 }, options.stepTime);
                 globe.int = timeInt;
             } else {
-                $play.find("div").css("background", "url(icons/bf.png) no-repeat");
+                $play.find("i").toggleClass('horizontal-pause-div horizontal-play-div');
                 $play.find("span").text("播放");
                 clearInterval(globe.int);
                 $pointer.draggable("enable");
             }
             options.afterClickPlay(); // 插件使用者点击播放的事件
         });
-        $this.find("#nex div").bind("click", function () {
+        $this.find("#nex i").bind("click", function () {
             movePointRight($this, options)
         });
-        $this.find("#pre div").bind("click", function () {
+        $this.find("#pre i").bind("click", function () {
             movePointLeft($this, options)
         });
 
@@ -271,18 +262,24 @@
         var $pointer = $this.find("#pointer");
         $pointer.stop(false, true);
         var d = parseInt($pointer.css('left')); //获取滑块距离左边的距离
-        if (d >= 24 * options.bar.scales - $pointer.width()) {
-            $pointer.css({left: -$pointer.width() / 2});
+        if (d >= options.scaleCount * options.scalesWidth - $pointer.width()) {
+            $pointer.css({left: options.scalesWidth});
+            d = parseInt($pointer.css('left'));
+            var time = parseInt(d / options.scalesWidth) - 1;// 控件，处理为小时
+            // console.log("d:" + d + "     option.scalesWidth:" + options.scalesWidth + "        d / options.scalesWidth:" + d / options.scalesWidth);
+            var divisionVal = (options.scaleRange[1] - options.scaleRange[0]) / options.scaleCount;
+            globe.currentTime = options.scaleRange[0] + time * divisionVal;
+            options.hourChange();
         } else {
-            $pointer.animate({left: d + options.bar.scales}, options.animateTime, function () {
+            $pointer.animate({left: d + options.scalesWidth}, options.animateTime, function () {
                 d = parseInt($pointer.css('left'));
-                var hour = parseInt((d + $pointer.width()) / options.bar.scales) - 1;// 控件，处理为小时
-                hour = hour == -1 ? 0 : hour;
-                globe.currentHour = hour;
+                var time = parseInt(d / options.scalesWidth) - 1;// 控件，处理为小时
+                // console.log("d:" + d + "     option.scalesWidth:" + options.scalesWidth + "        d / options.scalesWidth:" + d / options.scalesWidth);
+                var divisionVal = (options.scaleRange[1] - options.scaleRange[0]) / options.scaleCount;
+                globe.currentTime = options.scaleRange[0] + time * divisionVal;
                 options.hourChange();
             });
         }
-
     }
 
     /**
@@ -294,18 +291,23 @@
         var $pointer = $this.find("#pointer");
         $pointer.stop(false, true);
         var d = parseInt($pointer.css('left'));
-
-        if (d <= options.bar.scales - $pointer.width() / 2) {
-            return false;
+        if (d <= options.scalesWidth) {
+            $pointer.css({left: options.scaleCount * options.scalesWidth});
+            d = parseInt($pointer.css('left'));
+            var time = parseInt(d / options.scalesWidth) - 1;// 控件，处理为小时
+            var divisionVal = (options.scaleRange[1] - options.scaleRange[0]) / options.scaleCount;
+            globe.currentTime = options.scaleRange[0] + time * divisionVal;
+            options.hourChange();
         } else {
-            $pointer.animate({left: d - options.bar.scales}, options.animateTime, function () {
+            $pointer.animate({left: d - options.scalesWidth}, options.animateTime, function () {
                 d = parseInt($pointer.css('left'));
-                var hour = parseInt((d + $pointer.width()) / options.bar.scales) - 1;// 控件，处理为小时
-                hour = hour == -1 ? 0 : hour;
-                globe.currentHour = hour;
+                var time = parseInt(d / options.scalesWidth) - 1;// 控件，处理为小时
+                var divisionVal = (options.scaleRange[1] - options.scaleRange[0]) / options.scaleCount;
+                globe.currentTime = options.scaleRange[0] + time * divisionVal;
                 options.hourChange();
             });
         }
+
 
     }
 
@@ -316,21 +318,25 @@
      */
     function movePointRight($this, options) {
         var $pointer = $this.find("#pointer");
-        var $container = $this.find(".progress-container");
         $pointer.stop(false, true);
         var d = parseInt($pointer.css('left'));
-
-        if (d >= $container.width() - options.bar.scales - $pointer.width() / 2) {
-            return false;
+        if (d >= options.scaleCount * options.scalesWidth - $pointer.width()) {
+            $pointer.css({left: options.scalesWidth});
+            d = parseInt($pointer.css('left'));
+            var time = parseInt(d / options.scalesWidth) - 1;// 控件，处理为小时
+            var divisionVal = (options.scaleRange[1] - options.scaleRange[0]) / options.scaleCount;
+            globe.currentTime = options.scaleRange[0] + time * divisionVal;
+            options.hourChange();
         } else {
-            $pointer.animate({left: d + options.bar.scales}, options.animateTime, function () {
+            $pointer.animate({left: d + options.scalesWidth}, options.animateTime, function () {
                 d = parseInt($pointer.css('left'));
-                var hour = parseInt((d + $pointer.width()) / options.bar.scales) - 1;// 控件，处理为小时
-                hour = hour == -1 ? 0 : hour;
-                globe.currentHour = hour;
+                var time = parseInt(d / options.scalesWidth) - 1;// 控件，处理为小时
+                var divisionVal = (options.scaleRange[1] - options.scaleRange[0]) / options.scaleCount;
+                globe.currentTime = options.scaleRange[0] + time * divisionVal;
                 options.hourChange();
             });
         }
+
     }
 
     /**
@@ -340,7 +346,8 @@
      */
     function initData($this, options) {
         globe.currentDate = options.initDate;
-        globe.currentHour = options.initHour;
+        var divisionVal = (options.scaleRange[1] - options.scaleRange[0]) / options.scaleCount;
+        globe.currentTime = options.initTime;
         $($this.find("#dd")).datebox({
             value: options.initDate
         }).datebox({
@@ -350,7 +357,11 @@
             }
         });
         var $pointer = $this.find("#pointer");
-        var d = (options.initHour + 1) * options.bar.scales - $pointer.width() / 2; // 初始化距离左边的距离
+        var d = ((options.initTime - options.scaleRange[0]) / divisionVal + 1) * options.scalesWidth; // 初始化距离左边的距离
+
+        if (options.initTime < options.scaleRange[0] || options.initTime > options.scaleRange[1] - 1) {
+            $.error("你的初始化时间必须在约定范围" + options.scaleRange + "内");
+        }
         $pointer.css({
             left: d
         })
@@ -360,23 +371,15 @@
     $.fn.dateTimeMove = function (options) {
 
         var defaults = {
-            width: 1200,                           // 容器宽度
-            height: 'auto',                        // 容器高度
+            width: 1300,                           // 容器宽度
+            height: 100,                           // 容器高度
+            arrangeType: 'h',                      // 容器排列方式 h:水平;v:垂直
             backgroundColor: '#1A5C90',            // 容器背景颜色
-            timeCount: 24,                         // 时间显示个数
+            scaleCount: 24,                        // 刻度个数,例如是一天中的24小时，就写24;每5分钟一个刻度，就写12
+            groupCount: 3,                         // 刻度组，及3个刻度一个长刻度
+            scaleRange: [0, 24],                   // 刻度范围,不包括后面的那个刻度，例如[9,22]，仅代表9~21点的数据
             initDate: '2016-12-05',                // 初始化时间
-            initHour: 3,                           // 初始化小时
-            dateDivWidth: 200,                     // 日期控件div宽度
-            item: {
-                width: 80,                         // 按钮控件的宽度
-                height: 80                         // 按钮控件的高度
-            },
-            progressWidth: 750,                    // 进度条宽度
-            bar: {
-                scales: 30,                        // 刻度值长度
-                scalesHours: ['00:00', '03:00', '06:00', '09:00', '12:00', '15:00', '18:00', '21:00'],             //控件下面的字
-                scalesHourLeft: 90                 // 控件下面的字的间距
-            },
+            initTime: 5,                          // 初始化小时
             stepTime: 1000,                        // 播放的间隔时间
             animateTime: 'slow',                   // 动画长短，支持毫秒和字符串
             afterDrag: function () {

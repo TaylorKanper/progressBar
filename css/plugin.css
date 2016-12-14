@@ -11,36 +11,37 @@ span.datebox input[type='text'] {
     font-family: 微软雅黑;
     padding-top: 0px !important;
     text-align: center;
+    cursor: default;
 }
 
-/*******************************************/
-
-.dateTimeMove-container #play:hover, .dateTimeMove-container #pre:hover, .dateTimeMove-container #nex:hover {
+/**************************************************************************************/
+.dateTimeMove-horizontal-container .control-dateBox {
+    margin: auto;
+}
+.dateTimeMove-horizontal-container i:hover{
     cursor: pointer;
 }
 
-.dateTimeMove-container span {
+.horizontal-control-div {
+    position: relative;
+    padding: 5px;
+    width: 240px;
+    float: left;
+}
+
+.dateTimeMove-horizontal-container span, dateTimeMove-vertical-container span{
     font-family: 微软雅黑;
     color: #ffffff;
+    cursor: default;
 }
 
-.dateTimeMove-container #mm {
-    position: relative;
+.horizontal-play, .horizontal-nex, .horizontal-pre {
     float: left;
-    text-align: center;
-    padding-top: 12px;
+    width: 70px;
+    padding: 5px;
 }
 
-.dateTimeMove-container #play {
-    position: relative;
-    float: left;
-    text-align: center;
-    padding-bottom: 10px;
-    margin-left: 20px;
-    margin-top: 10px;
-}
-
-.dateTimeMove-container #play div {
+.horizontal-play .horizontal-play-div {
     display: block;
     margin: auto;
     width: 38px;
@@ -48,28 +49,15 @@ span.datebox input[type='text'] {
     background: url(../icons/bf.png) no-repeat;
 }
 
-.dateTimeMove-container #play span {
-    position: relative;
-    vertical-align: middle;
-    text-align: center;
-    padding: 2px 5px;
-    font-size: 12px;
-    border-radius: 10px;
-    background-color: #0E2E47;
+.horizontal-play .horizontal-pause-div {
     display: block;
     margin: auto;
-    width: 50%;
+    width: 38px;
+    height: 39px;
+    background: url(../icons/zt.png) no-repeat;
 }
 
-.dateTimeMove-container #nex {
-    position: relative;
-    float: left;
-    text-align: center;
-    padding-bottom: 10px;
-    margin-top: 10px;
-}
-
-.dateTimeMove-container #nex div {
+.horizontal-nex > i {
     display: block;
     margin: auto;
     width: 38px;
@@ -77,28 +65,7 @@ span.datebox input[type='text'] {
     background: url(../icons/xyg.png) no-repeat;
 }
 
-.dateTimeMove-container #nex span {
-    position: relative;
-    vertical-align: middle;
-    text-align: center;
-    padding: 2px 5px;
-    font-size: 12px;
-    border-radius: 10px;
-    background-color: #0E2E47;
-    display: block;
-    margin: auto;
-    width: 50%;
-}
-
-.dateTimeMove-container #pre {
-    position: relative;
-    float: left;
-    text-align: center;
-    padding-bottom: 10px;
-    margin-top: 10px;
-}
-
-.dateTimeMove-container #pre div {
+.horizontal-pre > i {
     display: block;
     margin: auto;
     width: 38px;
@@ -106,7 +73,7 @@ span.datebox input[type='text'] {
     background: url(../icons/syg.png) no-repeat;
 }
 
-.dateTimeMove-container #pre span {
+.horizontal-play span, .horizontal-nex span, .horizontal-pre span {
     position: relative;
     vertical-align: middle;
     text-align: center;
@@ -116,65 +83,49 @@ span.datebox input[type='text'] {
     background-color: #0E2E47;
     display: block;
     margin: auto;
-    width: 50%;
+    width: 80%;
 }
 
-.progress-container {
+.horizontal-progress-container {
     position: relative;
     float: left;
-    text-align: center;
-    margin-left: 10px;
+    height: 100%;
+    padding: 10px;
 }
 
-.progress-bar {
+.horizontal-progress-bar {
+    position: absolute;
     height: 10px;
     border-radius: 5px;
-    position: absolute;
     background-color: #0B2F4F;
-    top: 20px;
 }
 
-.progress-scale {
-    position: absolute;
-    list-style: none;
-    top: 25px;
-    padding: 0px;
-    width: 100%;
-    margin: 0;
-}
-
-.progress-scale li {
-    height: 10px;
-    border: 1px solid #0B3251;
-    position: absolute;
-}
-
-.progress-time {
-    position: absolute;
-    list-style: none;
-    top: 50px;
-    padding: 0px;
-    width: 100%;
-    margin: 0;
-}
-
-.progress-time li {
-    font-family: '微软雅黑';
-    color: #ffffff;
-    background-color: #0B3251;
-    border-radius: 20px;
-    font-size: 12px;
-    padding: 2px;
-    width: 40px;
-    text-align: center;
-    position: absolute;
-}
-
-.progress-pointer {
+.horizontal-progress-pointer {
     width: 20px;
     height: 20px;
     border-radius: 50%;
     position: absolute;
     border: none;
     background-color: #ffffff;
+}
+.horizontal-progress-scale {
+    position: absolute;
+    list-style: none;
+    padding: 0px;
+    width: 100%;
+    margin: 0;
+}
+
+.horizontal-progress-scale li {
+    height: 10px;
+    border: 1px solid #0B3251;
+    position: absolute;
+}
+.horizontal-progress-scale li>span{
+    position: absolute;
+    display: block;
+    width: 20px;
+    top: 20px;
+    left: -10px;
+    text-align: center;
 }
