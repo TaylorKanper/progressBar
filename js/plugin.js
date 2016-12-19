@@ -632,12 +632,12 @@
             width: 1300,                                            // 容器宽度
             height: 100,                                            // 容器高度
             arrangeType: 'h',                                       // 容器排列方式 h:水平;v:垂直
-            backgroundColor: '#1A5C90',                             // 容器背景颜色
+            backgroundColor: '',                                    // 容器背景颜色
             scaleCount: 24,                                         // 刻度个数,例如是一天中的24小时，就写24;每5分钟一个刻度，就写12
             groupCount: 3,                                          // 刻度组，及3个刻度一个长刻度
             scaleRange: [0, 24],                                    // 刻度范围,不包括后面的那个刻度，例如[9,22]，仅代表9~21点的数据
             initTime: 0,                                            // 初始化小时
-            initDate: '2016-12-05',                                 // 初始化时间
+            initDate: '1991-11-18',                                 // 初始化时间
             animateTime: 'slow',                                    // 动画长短，支持毫秒和字符串
             stepTime: 1000,                                         // 播放的间隔时间
             stopTime: 24,                                    // 滑块停止时间,undefined滑块将滑完整个容器,支持数字和字符串
