@@ -63,7 +63,7 @@
 | :--------------:|:------------------:|:-----------:|:-------------:| :-----|
 | width             | number,string     | 1300        | 1200,'100%' |容器宽度
 | height            | number,string     | 100         | 100,'100%'  |容器高度
-| arrangeType       | string            | 'h'         | 'h','v'     |容器排列,只支持这2种
+| arrangeType       | string            | 'h'         | 'h','v'     |容器排列,只支持这2种,h为水平排列,v为垂直排列
 | backgroundColor   | string            | ''          | '#1A5C90','rgba(26, 92, 144,0.5)' |容器背景颜色,填入符合css规范的背景属性即可
 | scaleCount        | number            | 24          | 24          |刻度线个数
 | groupCount        | number            | 3           | 4           |刻度线分组数
