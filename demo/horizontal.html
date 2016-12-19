@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>测试</title>
+    <link rel="stylesheet" href="../css/themes/bootstrap/easyui.css">
+    <link rel="stylesheet" href="../css/themes/icon.css">
+    <link rel="stylesheet" href="../css/plugin.css">
+</head>
+<body>
+<div id="ha"></div>
+<button id="btn">获取当前时间</button>
+<button id="setStopTime">设置停止时间</button>
+<div>
+    <h4>API</h4>
+    <p>
+        $("#setStopTime").bind("click", function () {
+        $("#ha").dateTimeMove("setStopTime", {stopTime: '18:00'});
+        })
+    </p>
+</div>
+<h3>README...</h3>
+<p style="color: blueviolet;font-family: '微软雅黑 Light';">一定要等当前的动画时间完成之后,再获取时间,不然Window.alert方法会阻塞</p>
+<script type="text/javascript" src="../js/jquery-2.2.0.min.js"></script>
+<script type="text/javascript" src="../js/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="../js/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="../js/plugin.js"></script>
+<script>
+    $("#ha").dateTimeMove({
+        width: 1200,                                            // 容器宽度
+        height: 100,                                            // 容器高度
+        arrangeType: 'h',                                       // 容器排列方式 h:水平;v:垂直
+        backgroundColor: 'rgba(26, 92, 144,0.5)',               // 容器背景颜色
+        scaleCount: 24,                                         // 刻度个数,例如是一天中的24小时，就写24;每5分钟一个刻度，就写12
+        groupCount: 4,                                          // 刻度组，及3个刻度一个长刻度
+        scaleRange: ['12:00', '24:00'],                                    // 刻度范围,不包括后面的那个刻度，例如[9,22]，仅代表9~21点的数据
+        initDate: '2016-12-05',                                 // 初始化日期
+        initTime: '12:00',                                            // 初始化时间
+        stepTime: 1000,                                         // 播放的间隔时间
+        animateTime: 'slow',                                    // 动画长短，支持毫秒和字符串
+        afterDrag: function () {
+        },                                                      // 在拖拽结束后执行的事件
+        afterClickPlay: function () {
+        },                                                      // 在点击播放时执行的事件
+        dateChange: function () {
+        },                                                      // 选择日期事件
+        hourChange: function () {
+
+        }                                                       // 小时改变事件
+    });
+
+
+    $("#btn").bind('click', function () {
+        var s = $("#ha").dateTimeMove("getCurrentTime");
+        alert("当前日期：" + s.currentDate + "  当前时间：" + s.currentTime);
+    });
+    $("#setStopTime").bind("click", function () {
+        $("#ha").dateTimeMove("setStopTime", {stopTime: '18:00'});
+    })
+
+</script>
+</body>
+</html>
