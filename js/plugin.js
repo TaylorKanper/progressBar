@@ -68,6 +68,10 @@
                     dragPoint($this, options);
                     bindEvent($this, options);
                     initData($this, options);
+                } else if (options.arrangeType == 'v') {// 垂直排列
+                    createVerticalDom($this, options);
+
+
                 }
             })
         },
@@ -127,7 +131,6 @@
      * 重新为dom绑定事件
      */
     function reSetEvent($this, options, obj) {
-        // TODO 重新为dom绑定事件
         $this.find("#play i").unbind("click");
         $this.find("#nex i").unbind("click");
         $this.find("#pre i").unbind("click");
@@ -185,8 +188,57 @@
         }
         x += "</ul>";
         $(x).appendTo($this.find(".horizontal-progress-container"));
+    }
+
+    /**
+     * 创建垂直排列的dom
+     * @param $this
+     * @param options
+     */
+    function createVerticalDom($this, options) {
+        $this.addClass("dateTimeMove-vertical-container").css({
+            width: options.width,
+            height: options.height,
+            backgroundColor: options.backgroundColor
+        });
+        var control = "<div class='vertical-control-div'></div>";
+        var $control = $(control).appendTo($this);
+
+        var e = "<div id='mm' class='control-dateBox'><input id='dd'></div>";
+        $(e).appendTo($control);
+
+        $this.find("#mm #dd").datebox({value: options.initDate});
+
+        var btn = "<div class='control-btn'><div id='play' class='vertical-play'><i class='vertical-play-div'></i><span>播放</span></div>" +
+            "<div id='pre' class='vertical-pre'><i></i><span>上一个</span></div>" +
+            "<div id='nex' class='vertical-nex'><i></i><span>下一个</span></div></div>";
+        $(btn).appendTo($control);
 
 
+        var s = "<div class='vertical-progress-container'></div>";
+        $(s).appendTo($this);
+
+        var o = "<div id='pointer'  class='vertical-progress-pointer'></div>";
+        $(o).appendTo($this.find(".vertical-progress-container"));
+
+        var t = "<div class='vertical-progress-bar'></div>";
+        $(t).appendTo($this.find(".vertical-progress-container"));
+
+
+        var x = "<ul class='vertical-progress-scale'>";
+        var min = options.scaleRange[0], max = options.scaleRange[1];
+        var scaleValue = (max - min) / options.scaleCount
+        for (var i = 0, len = options.scaleCount; i < len; i++) {
+            if (i % options.groupCount == 0 && options.timeType == "number") {
+                x += "<li><span>" + (options.scaleRange[0] + i * scaleValue) + "</span></li>"
+            } else if (i % options.groupCount == 0 && options.timeType == "xx:xx") {
+                x += "<li><span>" + getTimeSpan(options, i) + "</span></li>";
+            } else {
+                x += "<li></li>";
+            }
+        }
+        x += "</ul>";
+        $(x).appendTo($this.find(".vertical-progress-container"));
     }
 
     /**
@@ -212,7 +264,11 @@
         var barContainerWidth = $barContainer.width();
         $this.find(".horizontal-progress-bar").css({
             width: barContainerWidth,
-            top: containerHeight / 2 - 10
+            top: containerHeight / 2 - 10,
+            background: options.itemBackground
+        });
+        $this.find('.control-btn span').css({
+            background: options.itemBackground
         });
         var scales = $this.find(".horizontal-progress-scale").css({
             top: containerHeight / 2
@@ -225,9 +281,16 @@
         var borderWidth = 1;
         for (var i = 0, len = scales.length; i < len; i++) {
             if (i % options.groupCount == 0) {
-                $(scales[i]).css({left: itemWidth * (i + 1) - borderWidth, height: 20});
+                $(scales[i]).css({
+                    left: itemWidth * (i + 1) - borderWidth,
+                    height: 20,
+                    'border-color': options.itemBackground
+                });
             }
-            $(scales[i]).css({left: itemWidth * (i + 1) - borderWidth});
+            $(scales[i]).css({
+                left: itemWidth * (i + 1) - borderWidth,
+                'border-color': options.itemBackground
+            });
         }
         var $point = $this.find(".horizontal-progress-pointer");
         $point.css({
@@ -541,9 +604,9 @@
             date: d,
             hour: h,
             minute: mm
-        }
-        console.log(current);
+        };
 
+        return current;
     }
 
     /**
@@ -640,7 +703,8 @@
             initDate: '1991-11-18',                                 // 初始化时间
             animateTime: 'slow',                                    // 动画长短，支持毫秒和字符串
             stepTime: 1000,                                         // 播放的间隔时间
-            stopTime: 24,                                    // 滑块停止时间,undefined滑块将滑完整个容器,支持数字和字符串
+            stopTime: 24,                                           // 滑块停止时间,undefined滑块将滑完整个容器,支持数字和字符串
+            itemBackground: '#0B2F4F',                              // bar和播放/上一个/下一个的背景底色
             afterDrag: function () {
             },                                                      // 在拖拽结束后执行的事件
             afterClickPlay: function () {
