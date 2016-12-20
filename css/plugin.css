@@ -31,12 +31,28 @@ span.datebox input[type='text'] {
 }
 .vertical-control-div {
     position: relative;
-    padding: 5px;
-    width: 100px;
-    margin: auto;
+    width: 55px;
+    height: 100%;
+    float: left;
+}
+.vertical-control-div .control-dateBox{
+    transform:rotate(90deg);
+    -ms-transform:rotate(90deg); 	/* IE 9 */
+    -moz-transform:rotate(90deg); 	/* Firefox */
+    -webkit-transform:rotate(90deg); /* Safari 和 Chrome */
+    -o-transform:rotate(90deg); 	/* Opera */
+    position: absolute;
+    top: 90px;
+    left: -45px;
 }
 
-.dateTimeMove-horizontal-container span, dateTimeMove-vertical-container span {
+.vertical-control-div .control-btn{
+    float: left;
+    position: absolute;
+    top: 200px;
+}
+
+.dateTimeMove-horizontal-container span, .dateTimeMove-vertical-container span {
     font-family: 微软雅黑;
     color: #ffffff;
     cursor: default;
@@ -56,7 +72,7 @@ span.datebox input[type='text'] {
     background: url(../icons/bf.png) no-repeat;
 }
 
-.horizontal-play .horizontal-pause-div {
+.horizontal-play .horizontal-pause-div,.vertical-play .vertical-pause-div {
     display: block;
     margin: auto;
     width: 38px;
@@ -64,7 +80,7 @@ span.datebox input[type='text'] {
     background: url(../icons/zt.png) no-repeat;
 }
 
-.horizontal-nex > i {
+.horizontal-nex > i, .vertical-nex > i{
     display: block;
     margin: auto;
     width: 38px;
@@ -72,7 +88,7 @@ span.datebox input[type='text'] {
     background: url(../icons/xyg.png) no-repeat;
 }
 
-.horizontal-pre > i {
+.horizontal-pre > i,.vertical-pre > i {
     display: block;
     margin: auto;
     width: 38px;
@@ -80,7 +96,7 @@ span.datebox input[type='text'] {
     background: url(../icons/syg.png) no-repeat;
 }
 
-.horizontal-play span, .horizontal-nex span, .horizontal-pre span {
+.horizontal-play span, .horizontal-nex span, .horizontal-pre span,.vertical-play span, .vertical-nex span, .vertical-pre span {
     position: relative;
     vertical-align: middle;
     text-align: center;
@@ -99,6 +115,11 @@ span.datebox input[type='text'] {
     height: 100%;
     padding: 10px;
 }
+.vertical-progress-container {
+    position: relative;
+    padding: 10px 0px;
+    float: left;
+}
 
 .horizontal-progress-bar {
     position: absolute;
@@ -106,8 +127,14 @@ span.datebox input[type='text'] {
     border-radius: 5px;
     background-color: #0B2F4F;
 }
+.vertical-progress-bar {
+    position: absolute;
+    width: 10px;
+    border-radius: 5px;
+    background-color: #0B2F4F;
+}
 
-.horizontal-progress-pointer {
+.horizontal-progress-pointer,.vertical-progress-pointer {
     width: 20px;
     height: 20px;
     border-radius: 50%;
@@ -123,14 +150,34 @@ span.datebox input[type='text'] {
     width: 100%;
     margin: 0;
 }
+.vertical-progress-scale {
+    position: absolute;
+    list-style: none;
+    padding: 0px;
+    height: 100%;
+    margin: 0;
+}
 
 .horizontal-progress-scale li {
     height: 10px;
     border: 1px solid #0B3251;
     position: absolute;
 }
+.vertical-progress-scale li {
+    width: 10px;
+    border: 1px solid #0B3251;
+    position: absolute;
+}
 
 .horizontal-progress-scale li > span {
+    position: absolute;
+    display: block;
+    width: 60px;
+    top: 20px;
+    left: -30px;
+    text-align: center;
+}
+.vertical-progress-scale li > span {
     position: absolute;
     display: block;
     width: 60px;

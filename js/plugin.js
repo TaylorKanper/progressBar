@@ -70,8 +70,7 @@
                     initData($this, options);
                 } else if (options.arrangeType == 'v') {// 垂直排列
                     createVerticalDom($this, options);
-
-
+                    adjustVerticalDom($this, options);
                 }
             })
         },
@@ -94,6 +93,49 @@
         update: function (x) {
             console.log(this);
             console.log(x);
+        },
+        setCurrentTime: function (o) {
+            console.log(o);
+            var $this = $(this);
+            var options = $this.data('dateTimeMove');
+            if (options.timeType == 'xx:xx') {
+                if (!checkTime(o.currentTime)) {
+                    $.error("你的设置时间[" + o.currentTime + "],必须为有效的时间格式xx:xx");
+                }
+                var stop = getTimeFromZeroMenute(o.currentTime);
+                var begin = getTimeFromZeroMenute(options.scaleRange[0]);
+                var end = getTimeFromZeroMenute(options.scaleRange[1]);
+                if (stop > end || stop < begin) {
+                    $.error("你的设置时间currentTime:" + o.currentTime + ",必须在约定范围[" + options.scaleRange + "]内");
+                } else if (stop % options.perMinute != 0) {
+                    $.error("你的设置时间currentTime:" + o.currentTime + ",必须满足当前分度值[" + options.perMinute + "]的要求");
+                }
+            } else if (typeof o.currentTime != 'number') {
+                $.error("你的设置时间currentTime:" + o.currentTime + ",当前只能为数字");
+            } else if (o.currentTime < options.scaleRange[0] || o.currentTime > options.scaleRange[1] - 1) {
+                $.error("你的设置时间currentTime:" + o.currentTime + ",必须在约定范围[" + options.scaleRange + "]内");
+            } else if (!checkDate(o.currentDate)) {
+                $.error("你的设置日期[" + o.currentDate + "],必须为有效的日期格式yyyy-MM-dd");
+            }
+            $this.find("#mm #dd").datebox('setValue', o.currentDate);
+            // 修改全局变量
+            globe.currentDate = o.currentDate;
+            globe.currentTime = o.currentTime;
+            var $point = $this.find('#pointer');
+            if (options.timeType == 'xx:xx') {
+                var cur = getTimeFromZeroMenute(o.currentTime);
+                var start = getTimeFromZeroMenute(options.scaleRange[0]);
+                var d = ((cur - start) / options.perMinute + 1) * options.scalesWidth;
+                $point.css({
+                    left: d
+                })
+            } else if (options.timeType == 'number') {
+                var d = ((o.currentTime - options.scaleRange[0]) / options.perValue + 1) * options.scalesWidth;
+                $point.css({
+                    left: d
+                })
+            }
+
         },
         getCurrentTime: function () {
             var time = {
@@ -274,6 +316,62 @@
         $this.find(".horizontal-progress-bar").css({
             width: barContainerWidth,
             top: containerHeight / 2 - 10,
+            background: options.itemBackground
+        });
+        $this.find('.control-btn span').css({
+            background: options.itemBackground
+        });
+        var scales = $this.find(".horizontal-progress-scale").css({
+            top: containerHeight / 2
+        }).find("li");
+
+        var itemWidth = parseInt(barContainerWidth / (scales.length + 1));
+        // 将计算出的刻度值赋予全局
+        options.scalesWidth = itemWidth;
+        // 获取刻度线的边框宽度
+        var borderWidth = 1;
+        for (var i = 0, len = scales.length; i < len; i++) {
+            if (i % options.groupCount == 0) {
+                $(scales[i]).css({
+                    left: itemWidth * (i + 1) - borderWidth,
+                    height: 20,
+                    'border-color': options.itemBackground
+                });
+            }
+            $(scales[i]).css({
+                left: itemWidth * (i + 1) - borderWidth,
+                'border-color': options.itemBackground
+            });
+        }
+        var $point = $this.find(".horizontal-progress-pointer");
+        $point.css({
+            left: options.scalesWidth - $point.width() / 2 + 10,//加上内边距的值
+            top: containerHeight / 2 - 10 - 5,
+            'z-index': 1
+        })
+    }
+
+    /**
+     * 根据参数调整垂直dom位置
+     * @param $this
+     * @param options
+     */
+    function adjustVerticalDom($this, options) {
+        var dateBoxWidth = $("#dd").datebox("options").width;
+        var containerWidth = $this.width();
+        var containerHeight = $this.height();
+
+        $this.find("#mm").css({
+            width: dateBoxWidth
+        });
+        var $barContainer = $this.find(".vertical-progress-container").css({
+            width: containerWidth - 55,                     // 减去左边容器的宽度
+            height: containerHeight - 20                    // 减去上下内边距
+        });
+        var barContainerWidth = $barContainer.width();
+        $this.find(".vertical-progress-bar").css({
+            height: containerHeight,
+            left: containerHeight / 2 - 10,
             background: options.itemBackground
         });
         $this.find('.control-btn span').css({
@@ -666,6 +764,22 @@
         var reg = /^([0-2][0-9]):([0-5][0-9])$/;
         if (reg.test(time)) {
             if ((parseInt(RegExp.$1) <= 24) && (parseInt(RegExp.$2) < 60)) {
+                result = true;
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 验证日期格式是否正确
+     * @param date
+     */
+    function checkDate(date) {
+        console.log(date);
+        var result = false;
+        var reg = /^([1-2][0-9][0-9][0-9])-([0-1][0-9])-([0-3][0-9])$/;
+        if (reg.test(date)) {
+            if ((parseInt(RegExp.$2) <= 12) && (parseInt(RegExp.$3) < 32)) {
                 result = true;
             }
         }

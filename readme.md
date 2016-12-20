@@ -105,3 +105,8 @@ pauseTime:调用方法停止时间滚动,没有参数
 ```angular2html
 $("your jquery object").dateTimeMove("pauseTime");
 ```
+setCurrentTime:调用方法到某个日期下的时间节点,参数必须为
+```angular2html
+{currentDate:'yyyy-MM-dd',currentTime:'18:00'}
+$('your jquery object').dateTimeMove('setCurrentTime', {currentDate: '2016-12-24', currentTime: '18:00'});
+```

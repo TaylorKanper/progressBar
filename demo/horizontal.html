@@ -38,6 +38,15 @@
         })
     </p>
 </div>
+<button id="setCurrentTime">设置当前时间</button>
+<div>
+    <h4>API</h4>
+    <p>
+        $("#setCurrentTime").bind('click', function () {
+        $('#ha').dateTimeMove('setCurrentTime', {currentDate: '2016-12-24', currentTime: '18:00'});
+        })
+    </p>
+</div>
 <h3>README...</h3>
 <p style="color: blueviolet;font-family: '微软雅黑 Light';">一定要等当前的动画时间完成之后,再获取时间,不然Window.alert方法会阻塞</p>
 <script type="text/javascript" src="../js/jquery-2.2.0.min.js"></script>
@@ -79,6 +88,9 @@
     });
     $("#pauseTime").bind('click', function () {
         $('#ha').dateTimeMove('pauseTime');
+    });
+    $("#setCurrentTime").bind('click', function () {
+        $('#ha').dateTimeMove('setCurrentTime', {currentDate: '2016-12-24', currentTime: '18:00'});
     })
 
 </script>
