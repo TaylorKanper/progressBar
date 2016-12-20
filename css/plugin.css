@@ -32,8 +32,8 @@ span.datebox input[type='text'] {
 .vertical-control-div {
     position: relative;
     padding: 5px;
-    width: 240px;
-    float: left;
+    width: 100px;
+    margin: auto;
 }
 
 .dateTimeMove-horizontal-container span, dateTimeMove-vertical-container span {
@@ -42,13 +42,13 @@ span.datebox input[type='text'] {
     cursor: default;
 }
 
-.horizontal-play, .horizontal-nex, .horizontal-pre {
+.horizontal-play, .horizontal-nex, .horizontal-pre,.vertical-play, .vertical-nex, .vertical-pre {
     float: left;
     width: 70px;
     padding: 5px;
 }
 
-.horizontal-play .horizontal-play-div {
+.horizontal-play .horizontal-play-div,.vertical-play .vertical-play-div {
     display: block;
     margin: auto;
     width: 38px;

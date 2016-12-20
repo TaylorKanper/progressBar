@@ -1946,6 +1946,7 @@
 .datebox .combo-arrow {
   background-image: url('images/11.png');
   background-position: center center;
+  border-radius: 10px;
 }
 .datebox-button {
   background-color: #F5F5F5;
@@ -2234,7 +2235,7 @@
 }
 .slider-v .slider-rule span {
   width: 5px;
-  height: 'auto';
+  height: auto;
   border-left: 0;
   border-width: 1px 0 0 0;
   border-style: solid;

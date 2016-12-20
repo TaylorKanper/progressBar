@@ -256,7 +256,7 @@
      * @param options
      */
     function adjustDom($this, options) {
-        var dateBoxWidth = $("#dd").datebox("options").panelWidth;
+        var dateBoxWidth = $("#dd").datebox("options").width;
         var containerWidth = $this.width();
         var containerHeight = $this.height();
 
