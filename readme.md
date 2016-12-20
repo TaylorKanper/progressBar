@@ -41,6 +41,7 @@
         initTime: '12:00',                                      // 初始化时间
         stepTime: 1000,                                         // 播放的间隔时间
         animateTime: 'slow',                                    // 动画长短，支持毫秒和字符串
+        itemBackground: '#0B2F4F',                              // bar和播放/上一个/下一个的背景底色
         afterDrag: function () {
         },                                                      // 在拖拽结束后执行的方法
         afterClickPlay: function () {
@@ -59,6 +60,7 @@
 该容器可以在引用外层给他定义相对位置和其他的css来适应页面的开发
 
 ####property属性
+
 | 属性           |类型                  |默认值        |示例            | 说明  |
 | :--------------:|:------------------:|:-----------:|:-------------:| :-----|
 | width             | number,string     | 1300        | 1200,'100%' |容器宽度
@@ -72,6 +74,8 @@
 | initTime          | number,string     | 0           | '23:00'     |初始化时间,但是需要和scaleRange保持一致格式
 | stepTime          | number            | 1000        | 1000        |两次动画间隔时间,单位为毫秒
 | animateTime       | number,string     | 'slow'      | 2000        |动画播放时间,支持毫秒和特征字符串'fast','slow'
+| itemBackground    | string            | '#0B2F4F'   | '#0B2F4F'   |bar/播放/上一个/下一个/刻度线的背景底色
+
 ####event事件
 
 afterDrag:在拖拽结束后执行的方法
