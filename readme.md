@@ -99,3 +99,9 @@ setStopTime:设置停止时间,包括拖拽/播放/上一个/下一个,均在时
 ```$xslt
 $("your jquery object").dateTimeMove("setStopTime", {stopTime: '18:00'});
 ```
+
+pauseTime:调用方法停止时间滚动,没有参数
+
+```angular2html
+$("your jquery object").dateTimeMove("pauseTime");
+```
