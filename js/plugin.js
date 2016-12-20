@@ -58,9 +58,11 @@
             return this.each(function () {
                 var $this = $(this);
                 var data = $this.data('dateTimeMove');
+
                 if (!data) {
                     // 将options缓存到dom中,方便之后修改
                     $this.data('dateTimeMove', options);
+
                 }
                 if (options.arrangeType == 'h') {//水平排列
                     createDom($this, options);
@@ -95,7 +97,6 @@
             console.log(x);
         },
         setCurrentTime: function (o) {
-            console.log(o);
             var $this = $(this);
             var options = $this.data('dateTimeMove');
             if (options.timeType == 'xx:xx') {
@@ -110,13 +111,16 @@
                 } else if (stop % options.perMinute != 0) {
                     $.error("你的设置时间currentTime:" + o.currentTime + ",必须满足当前分度值[" + options.perMinute + "]的要求");
                 }
+                if (!checkDate(o.currentDate)) {
+                    $.error("你的设置日期[" + o.currentDate + "],必须为有效的日期格式yyyy-MM-dd");
+                }
             } else if (typeof o.currentTime != 'number') {
                 $.error("你的设置时间currentTime:" + o.currentTime + ",当前只能为数字");
-            } else if (o.currentTime < options.scaleRange[0] || o.currentTime > options.scaleRange[1] - 1) {
-                $.error("你的设置时间currentTime:" + o.currentTime + ",必须在约定范围[" + options.scaleRange + "]内");
-            } else if (!checkDate(o.currentDate)) {
-                $.error("你的设置日期[" + o.currentDate + "],必须为有效的日期格式yyyy-MM-dd");
             }
+            if (o.currentTime < options.scaleRange[0] || o.currentTime > options.scaleRange[1] - 1) {
+                $.error("你的设置时间currentTime:" + o.currentTime + ",必须在约定范围[" + options.scaleRange + "]内");
+            }
+
             $this.find("#mm #dd").datebox('setValue', o.currentDate);
             // 修改全局变量
             globe.currentDate = o.currentDate;
@@ -775,7 +779,6 @@
      * @param date
      */
     function checkDate(date) {
-        console.log(date);
         var result = false;
         var reg = /^([1-2][0-9][0-9][0-9])-([0-1][0-9])-([0-3][0-9])$/;
         if (reg.test(date)) {
