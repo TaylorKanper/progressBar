@@ -104,6 +104,7 @@
         },
         pauseTime: function () {
             var $this = $(this);
+            var $pointer = $(this).find("#pointer");
             var $play = $this.find('#play');
             $play.find("i").removeClass('horizontal-pause-div horizontal-play-div').addClass('horizontal-play-div');
             $play.find("span").text("播放");
