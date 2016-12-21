@@ -180,8 +180,10 @@ span.datebox input[type='text'] {
 .vertical-progress-scale li > span {
     position: absolute;
     display: block;
-    width: 60px;
-    top: 20px;
-    left: -30px;
+    height: 22px;
+    width: 30px;
+    top: -11px;
+    vertical-align: middle;
     text-align: center;
+    left: 15px;
 }

@@ -25,6 +25,8 @@
     var methods = {
         init: function (options) {
             if (typeof options.scaleRange[0] == 'string') {
+                options.stopTime = options.scaleRange[1];
+                options.timeType = "xx:xx";
                 if (checkTime(options.scaleRange[0]) && checkTime(options.scaleRange[1])) {
                     formatTime(options);
                 } else {
@@ -58,11 +60,9 @@
             return this.each(function () {
                 var $this = $(this);
                 var data = $this.data('dateTimeMove');
-
                 if (!data) {
                     // 将options缓存到dom中,方便之后修改
                     $this.data('dateTimeMove', options);
-
                 }
                 if (options.arrangeType == 'h') {//水平排列
                     createDom($this, options);
@@ -73,6 +73,7 @@
                 } else if (options.arrangeType == 'v') {// 垂直排列
                     createVerticalDom($this, options);
                     adjustVerticalDom($this, options);
+                    dragVerticalPoint($this, options);
                 }
             })
         },
@@ -93,12 +94,12 @@
 
         },
         update: function (x) {
-            console.log(this);
-            console.log(x);
+
         },
         setCurrentTime: function (o) {
             var $this = $(this);
             var options = $this.data('dateTimeMove');
+
             if (options.timeType == 'xx:xx') {
                 if (!checkTime(o.currentTime)) {
                     $.error("你的设置时间[" + o.currentTime + "],必须为有效的时间格式xx:xx");
@@ -142,6 +143,7 @@
 
         },
         getCurrentTime: function () {
+
             var time = {
                 currentDate: globe.currentDate,
                 currentTime: globe.currentTime
@@ -159,7 +161,6 @@
         },
         setStopTime: function (obj) {
             var $this = $(this);
-
             var options = $this.data('dateTimeMove');
             if (options.timeType == 'xx:xx') {
                 if (!checkTime(obj.stopTime)) {
@@ -189,6 +190,13 @@
         $this.find("#play i").unbind("click");
         $this.find("#nex i").unbind("click");
         $this.find("#pre i").unbind("click");
+        if (options.timeType == 'xx:xx') {
+            obj.stopTime = getTimeFromZeroMenute(obj.stopTime) + options.perMinute;
+            obj.stopTime = getTimeFromMinute(obj.stopTime);
+        } else {
+            obj.stopTime = obj.stopTime + options.perValue;
+        }
+
         options.stopTime = obj.stopTime;
         dragPoint($this, options);
         bindEvent($this, options);
@@ -372,41 +380,41 @@
             width: containerWidth - 55,                     // 减去左边容器的宽度
             height: containerHeight - 20                    // 减去上下内边距
         });
-        var barContainerWidth = $barContainer.width();
+        var barContainerHeight = $barContainer.height();
         $this.find(".vertical-progress-bar").css({
-            height: containerHeight,
-            left: containerHeight / 2 - 10,
+            height: containerHeight - 20,
+            left: 30,
             background: options.itemBackground
         });
         $this.find('.control-btn span').css({
             background: options.itemBackground
         });
-        var scales = $this.find(".horizontal-progress-scale").css({
-            top: containerHeight / 2
+        var scales = $this.find(".vertical-progress-scale").css({
+            left: 35
         }).find("li");
 
-        var itemWidth = parseInt(barContainerWidth / (scales.length + 1));
+        var itemHeight = parseInt(barContainerHeight / (scales.length + 1));
         // 将计算出的刻度值赋予全局
-        options.scalesWidth = itemWidth;
+        options.scalesWidth = itemHeight;
         // 获取刻度线的边框宽度
         var borderWidth = 1;
         for (var i = 0, len = scales.length; i < len; i++) {
             if (i % options.groupCount == 0) {
                 $(scales[i]).css({
-                    left: itemWidth * (i + 1) - borderWidth,
-                    height: 20,
+                    top: itemHeight * (i + 1) - borderWidth,
+                    width: 20,
                     'border-color': options.itemBackground
                 });
             }
             $(scales[i]).css({
-                left: itemWidth * (i + 1) - borderWidth,
+                top: itemHeight * (i + 1) - borderWidth,
                 'border-color': options.itemBackground
             });
         }
-        var $point = $this.find(".horizontal-progress-pointer");
+        var $point = $this.find(".vertical-progress-pointer");
         $point.css({
-            left: options.scalesWidth - $point.width() / 2 + 10,//加上内边距的值
-            top: containerHeight / 2 - 10 - 5,
+            left: 25,
+            top: options.scalesWidth,
             'z-index': 1
         })
     }
@@ -454,6 +462,64 @@
             onStopDrag: function (e) {
                 var d = e.data;
                 var time = parseInt((d.left + $(d.target).width()) / options.scalesWidth) - 1;// 控件，处理为小时
+                if (options.timeType == 'xx:xx') {
+                    // console.log(time * options.perMinute);//获取距离起始点的分钟数
+                    var currentTime = getTimeFromBeginning(options.scaleRange[0], time * options.perMinute);
+                    globe.currentTime = currentTime;
+                } else {
+                    var divisionVal = (options.scaleRange[1] - options.scaleRange[0]) / options.scaleCount;
+                    globe.currentTime = options.scaleRange[0] + time * divisionVal;
+                }
+                options.hourChange();
+                options.afterDrag();
+
+            }
+        });
+    }
+
+    /**
+     * 垂直拖拽
+     * @param $this
+     * @param options
+     */
+    function dragVerticalPoint($this, options) {
+        var $pointer = $this.find("#pointer");
+        $pointer.draggable({
+            cursor: 'pointer',
+            axis: 'v',
+            onDrag: function (e) {
+                var d = e.data;
+                if (d.top < options.scalesWidth - 10) {//减去滑块的宽度一半
+                    d.top = options.scalesWidth - 10
+                }
+                var dis = options.scalesWidth * options.scaleCount;
+
+                if (options.timeType == 'xx:xx') {
+                    var star = getTimeFromZeroMenute(options.scaleRange[0]);
+                    var stop = getTimeFromZeroMenute(options.stopTime);
+                    var s = (stop - star) / options.perMinute;
+                    dis = s * options.scalesWidth;
+                } else if (options.timeType == 'number') {
+                    var s = (options.stopTime - options.scaleRange[0]) / options.perValue;
+                    dis = s * options.scalesWidth;
+                }
+
+                if (d.top > dis) {
+                    d.top = dis;
+                }
+                d.top = repair(d.top);
+                function repair(v) {
+                    var r = parseInt(v / options.scalesWidth) * options.scalesWidth;
+                    if (Math.abs(v % options.scalesWidth) > 10) {
+                        r += v > 0 ? options.scalesWidth : -options.scalesWidth;
+                    }
+                    return r;
+                }
+            },
+
+            onStopDrag: function (e) {
+                var d = e.data;
+                var time = parseInt((d.top + $(d.target).height()) / options.scalesWidth) - 1;// 控件，处理为小时
                 if (options.timeType == 'xx:xx') {
                     // console.log(time * options.perMinute);//获取距离起始点的分钟数
                     var currentTime = getTimeFromBeginning(options.scaleRange[0], time * options.perMinute);
@@ -691,7 +757,6 @@
             });
         } else {
             var divisionVal = (options.scaleRange[1] - options.scaleRange[0]) / options.scaleCount;
-
             var d = ((options.initTime - options.scaleRange[0]) / divisionVal + 1) * options.scalesWidth; // 初始化距离左边的距离
             $pointer.css({
                 left: d
@@ -726,8 +791,6 @@
      * @param scale
      */
     function formatTime(options) {
-        options.stopTime = options.scaleRange[1];
-        options.timeType = "xx:xx";
         var hour = [], minute = [];
         hour[0] = parseInt(options.scaleRange[0].split(':')[0]);
         minute[0] = parseInt(options.scaleRange[0].split(':')[1]);
@@ -744,6 +807,16 @@
         options.hour = hour;
         options.minute = minute;
 
+    }
+
+    /**
+     * 根据距离凌晨的分钟数获取当前时间的字符串
+     * @param minute
+     */
+    function getTimeFromMinute(minute) {
+        var hour = parseInt(minute / 60) < 10 ? ('0' + parseInt(minute / 60)) : '' + parseInt(minute / 60);
+        var minute = minute % 60 < 10 ? ('0' + minute % 60) : '' + minute % 60;
+        return hour + ':' + minute;
     }
 
     /**
@@ -842,7 +915,6 @@
         };
 
         var lastOptions = $.extend({}, defaults, options);
-
         if (methods[options]) {
             return methods[options].apply(this, Array.prototype.slice.call(arguments, 1));
         } else if (typeof options === 'object' || !options) {
