@@ -74,27 +74,9 @@
                     createVerticalDom($this, options);
                     adjustVerticalDom($this, options);
                     dragVerticalPoint($this, options);
+                    bindEvent($this, options);
                 }
             })
-        },
-        destroy: function () {
-            return this.each(function () {
-                var $this = $(this);
-                $(window).unbind('.dateTimeMove');
-                $this.html('');
-            })
-        },
-        reposition: function () {
-            // ...
-        },
-        show: function () {
-            // ...
-        },
-        hide: function () {
-
-        },
-        update: function (x) {
-
         },
         setCurrentTime: function (o) {
             var $this = $(this);
@@ -530,7 +512,6 @@
                 }
                 options.hourChange();
                 options.afterDrag();
-
             }
         });
     }
@@ -550,7 +531,11 @@
                 $pre.unbind("click");
                 $nex.unbind("click");
                 $play.find("span").text("暂停");
-                $play.find("i").toggleClass('horizontal-play-div horizontal-pause-div');
+                if (options.arrangeType == 'h') {
+                    $play.find("i").toggleClass('horizontal-play-div horizontal-pause-div');
+                } else {
+                    $play.find("i").toggleClass('vertical-play-div vertical-pause-div');
+                }
                 $pointer.draggable("disable");
                 var timeInt = setInterval(function () {
                     movePointAuto($this, options)
@@ -558,7 +543,11 @@
                 globe.int = timeInt;
 
             } else {
-                $play.find("i").toggleClass('horizontal-pause-div horizontal-play-div');
+                if (options.arrangeType == 'h') {
+                    $play.find("i").toggleClass('horizontal-pause-div horizontal-play-div');
+                } else {
+                    $play.find("i").toggleClass('vertical-pause-div vertical-play-div');
+                }
                 $play.find("span").text("播放");
                 clearInterval(globe.int);
                 $pointer.draggable("enable");
@@ -574,6 +563,7 @@
 
     }
 
+
     /**
      * 滑块自动向右边移动
      * @param $this
@@ -582,51 +572,98 @@
     function movePointAuto($this, options) {
         var $pointer = $this.find("#pointer");
         $pointer.stop(false, true);
-        var d = parseInt($pointer.css('left')); //获取滑块距离左边的距离
-        if (options.timeType == 'xx:xx') {
-            var star = getTimeFromZeroMenute(options.scaleRange[0]);
-            var stop = getTimeFromZeroMenute(options.stopTime);
-            var s = (stop - star) / options.perMinute;
-            if (d >= s * options.scalesWidth - $pointer.width()) {
-                $pointer.css({left: options.scalesWidth});
-                d = parseInt($pointer.css('left'));
-                var time = parseInt(d / options.scalesWidth) - 1;// 控件，处理为小时
-
-                // console.log(time * options.perMinute);//获取距离起始点的分钟数
-                var currentTime = getTimeFromBeginning(options.scaleRange[0], time * options.perMinute);
-                globe.currentTime = currentTime;
-
-                options.hourChange();
-            } else {
-                $pointer.animate({left: d + options.scalesWidth}, options.animateTime, function () {
+        if (options.arrangeType == 'h') {
+            var d = parseInt($pointer.css('left')); //获取滑块距离左边的距离
+            if (options.timeType == 'xx:xx') {
+                var star = getTimeFromZeroMenute(options.scaleRange[0]);
+                var stop = getTimeFromZeroMenute(options.stopTime);
+                var s = (stop - star) / options.perMinute;
+                if (d >= s * options.scalesWidth - $pointer.width()) {
+                    $pointer.css({left: options.scalesWidth});
                     d = parseInt($pointer.css('left'));
                     var time = parseInt(d / options.scalesWidth) - 1;// 控件，处理为小时
+
                     // console.log(time * options.perMinute);//获取距离起始点的分钟数
                     var currentTime = getTimeFromBeginning(options.scaleRange[0], time * options.perMinute);
                     globe.currentTime = currentTime;
+
                     options.hourChange();
-                });
-            }
-        } else if (options.timeType == 'number') {
-            var s = (options.stopTime - options.scaleRange[0]) / options.perValue;
-            if (d >= s * options.scalesWidth - $pointer.width()) {
-                $pointer.css({left: options.scalesWidth});
-                d = parseInt($pointer.css('left'));
-                var time = parseInt(d / options.scalesWidth) - 1;// 控件，处理为小时
-
-
-                globe.currentTime = options.scaleRange[0] + time * options.perValue;
-
-                options.hourChange();
-            } else {
-                $pointer.animate({left: d + options.scalesWidth}, options.animateTime, function () {
+                } else {
+                    $pointer.animate({left: d + options.scalesWidth}, options.animateTime, function () {
+                        d = parseInt($pointer.css('left'));
+                        var time = parseInt(d / options.scalesWidth) - 1;// 控件，处理为小时
+                        // console.log(time * options.perMinute);//获取距离起始点的分钟数
+                        var currentTime = getTimeFromBeginning(options.scaleRange[0], time * options.perMinute);
+                        globe.currentTime = currentTime;
+                        options.hourChange();
+                    });
+                }
+            } else if (options.timeType == 'number') {
+                var s = (options.stopTime - options.scaleRange[0]) / options.perValue;
+                if (d >= s * options.scalesWidth - $pointer.width()) {
+                    $pointer.css({left: options.scalesWidth});
                     d = parseInt($pointer.css('left'));
+                    var time = parseInt(d / options.scalesWidth) - 1;// 控件，处理为小时
+
+
+                    globe.currentTime = options.scaleRange[0] + time * options.perValue;
+
+                    options.hourChange();
+                } else {
+                    $pointer.animate({left: d + options.scalesWidth}, options.animateTime, function () {
+                        d = parseInt($pointer.css('left'));
+                        var time = parseInt(d / options.scalesWidth) - 1;// 控件，处理为小时
+                        globe.currentTime = options.scaleRange[0] + time * options.perValue;
+                        options.hourChange();
+                    });
+                }
+            }
+        } else {
+            var d = parseInt($pointer.css('top')); //获取滑块距离上方的距离
+            if (options.timeType == 'xx:xx') {
+                var star = getTimeFromZeroMenute(options.scaleRange[0]);
+                var stop = getTimeFromZeroMenute(options.stopTime);
+                var s = (stop - star) / options.perMinute;
+                if (d >= s * options.scalesWidth - $pointer.width()) {
+                    $pointer.css({top: options.scalesWidth});
+                    d = parseInt($pointer.css('top'));
+                    var time = parseInt(d / options.scalesWidth) - 1;// 控件，处理为小时
+
+                    // console.log(time * options.perMinute);//获取距离起始点的分钟数
+                    var currentTime = getTimeFromBeginning(options.scaleRange[0], time * options.perMinute);
+                    globe.currentTime = currentTime;
+
+                    options.hourChange();
+                } else {
+                    $pointer.animate({top: d + options.scalesWidth}, options.animateTime, function () {
+                        d = parseInt($pointer.css('top'));
+                        var time = parseInt(d / options.scalesWidth) - 1;// 控件，处理为小时
+                        // console.log(time * options.perMinute);//获取距离起始点的分钟数
+                        var currentTime = getTimeFromBeginning(options.scaleRange[0], time * options.perMinute);
+                        globe.currentTime = currentTime;
+                        options.hourChange();
+                    });
+                }
+            } else if (options.timeType == 'number') {
+                var s = (options.stopTime - options.scaleRange[0]) / options.perValue;
+                if (d >= s * options.scalesWidth - $pointer.width()) {
+                    $pointer.css({top: options.scalesWidth});
+                    d = parseInt($pointer.css('top'));
                     var time = parseInt(d / options.scalesWidth) - 1;// 控件，处理为小时
                     globe.currentTime = options.scaleRange[0] + time * options.perValue;
                     options.hourChange();
-                });
+                } else {
+                    $pointer.animate({top: d + options.scalesWidth}, options.animateTime, function () {
+                        d = parseInt($pointer.css('top'));
+                        var time = parseInt(d / options.scalesWidth) - 1;// 控件，处理为小时
+                        globe.currentTime = options.scaleRange[0] + time * options.perValue;
+                        options.hourChange();
+                    });
+                }
             }
+
         }
+
     }
 
     /**
@@ -637,40 +674,78 @@
     function movePointLeft($this, options) {
         var $pointer = $this.find("#pointer");
         $pointer.stop(false, true);
-        var d = parseInt($pointer.css('left'));
-        if (d <= options.scalesWidth) {
-            if (options.timeType == 'xx:xx') {
-                var left = (getTimeFromZeroMenute(options.stopTime) - getTimeFromZeroMenute(options.scaleRange[0])) / options.perMinute;
-                $pointer.css({left: left * options.scalesWidth});
-                d = parseInt($pointer.css('left'));
-                var time = parseInt(d / options.scalesWidth) - 1;// 控件，处理为小时
-                // console.log(time * options.perMinute);//获取距离起始点的分钟数
-                var currentTime = getTimeFromBeginning(options.scaleRange[0], time * options.perMinute);
-                globe.currentTime = currentTime;
-            } else {
-                var left = (options.stopTime - options.scaleRange[0]) / options.perValue;
-                $pointer.css({left: left * options.scalesWidth});
-                d = parseInt($pointer.css('left'));
-                var time = parseInt(d / options.scalesWidth) - 1;// 控件，处理为小时
-                var divisionVal = (options.scaleRange[1] - options.scaleRange[0]) / options.scaleCount;
-                globe.currentTime = options.scaleRange[0] + time * divisionVal;
-            }
-
-            options.hourChange();
-        } else {
-            $pointer.animate({left: d - options.scalesWidth}, options.animateTime, function () {
-                d = parseInt($pointer.css('left'));
-                var time = parseInt(d / options.scalesWidth) - 1;// 控件，处理为小时
+        if (options.arrangeType == 'h') {
+            var d = parseInt($pointer.css('left'));
+            if (d <= options.scalesWidth) {
                 if (options.timeType == 'xx:xx') {
+                    var left = (getTimeFromZeroMenute(options.stopTime) - getTimeFromZeroMenute(options.scaleRange[0])) / options.perMinute;
+                    $pointer.css({left: left * options.scalesWidth});
+                    d = parseInt($pointer.css('left'));
+                    var time = parseInt(d / options.scalesWidth) - 1;// 控件，处理为小时
                     // console.log(time * options.perMinute);//获取距离起始点的分钟数
                     var currentTime = getTimeFromBeginning(options.scaleRange[0], time * options.perMinute);
                     globe.currentTime = currentTime;
                 } else {
+                    var left = (options.stopTime - options.scaleRange[0]) / options.perValue;
+                    $pointer.css({left: left * options.scalesWidth});
+                    d = parseInt($pointer.css('left'));
+                    var time = parseInt(d / options.scalesWidth) - 1;// 控件，处理为小时
                     var divisionVal = (options.scaleRange[1] - options.scaleRange[0]) / options.scaleCount;
                     globe.currentTime = options.scaleRange[0] + time * divisionVal;
                 }
+
                 options.hourChange();
-            });
+            } else {
+                $pointer.animate({left: d - options.scalesWidth}, options.animateTime, function () {
+                    d = parseInt($pointer.css('left'));
+                    var time = parseInt(d / options.scalesWidth) - 1;// 控件，处理为小时
+                    if (options.timeType == 'xx:xx') {
+                        // console.log(time * options.perMinute);//获取距离起始点的分钟数
+                        var currentTime = getTimeFromBeginning(options.scaleRange[0], time * options.perMinute);
+                        globe.currentTime = currentTime;
+                    } else {
+                        var divisionVal = (options.scaleRange[1] - options.scaleRange[0]) / options.scaleCount;
+                        globe.currentTime = options.scaleRange[0] + time * divisionVal;
+                    }
+                    options.hourChange();
+                });
+            }
+        } else {
+            var d = parseInt($pointer.css('top'));
+            if (d <= options.scalesWidth) {
+                if (options.timeType == 'xx:xx') {
+                    var top = (getTimeFromZeroMenute(options.stopTime) - getTimeFromZeroMenute(options.scaleRange[0])) / options.perMinute;
+                    $pointer.css({top: top * options.scalesWidth});
+                    d = parseInt($pointer.css('top'));
+                    var time = parseInt(d / options.scalesWidth) - 1;// 控件，处理为小时
+                    // console.log(time * options.perMinute);//获取距离起始点的分钟数
+                    var currentTime = getTimeFromBeginning(options.scaleRange[0], time * options.perMinute);
+                    globe.currentTime = currentTime;
+                } else {
+                    var top = (options.stopTime - options.scaleRange[0]) / options.perValue;
+                    $pointer.css({left: top * options.scalesWidth});
+                    d = parseInt($pointer.css('top'));
+                    var time = parseInt(d / options.scalesWidth) - 1;// 控件，处理为小时
+                    var divisionVal = (options.scaleRange[1] - options.scaleRange[0]) / options.scaleCount;
+                    globe.currentTime = options.scaleRange[0] + time * divisionVal;
+                }
+
+                options.hourChange();
+            } else {
+                $pointer.animate({top: d - options.scalesWidth}, options.animateTime, function () {
+                    d = parseInt($pointer.css('top'));
+                    var time = parseInt(d / options.scalesWidth) - 1;// 控件，处理为小时
+                    if (options.timeType == 'xx:xx') {
+                        // console.log(time * options.perMinute);//获取距离起始点的分钟数
+                        var currentTime = getTimeFromBeginning(options.scaleRange[0], time * options.perMinute);
+                        globe.currentTime = currentTime;
+                    } else {
+                        var divisionVal = (options.scaleRange[1] - options.scaleRange[0]) / options.scaleCount;
+                        globe.currentTime = options.scaleRange[0] + time * divisionVal;
+                    }
+                    options.hourChange();
+                });
+            }
         }
 
 
@@ -682,51 +757,99 @@
      * @param options
      */
     function movePointRight($this, options) {
+
         var $pointer = $this.find("#pointer");
         $pointer.stop(false, true);
-        var d = parseInt($pointer.css('left'));
-        if (options.timeType == 'xx:xx') {
-            var star = getTimeFromZeroMenute(options.scaleRange[0]);
-            var stop = getTimeFromZeroMenute(options.stopTime);
-            var s = (stop - star) / options.perMinute;
-            if (d >= s * options.scalesWidth - $pointer.width()) {
-                $pointer.css({left: options.scalesWidth});
-                d = parseInt($pointer.css('left'));
-                var time = parseInt(d / options.scalesWidth) - 1;// 控件，处理为小时
-
-                // console.log(time * options.perMinute);//获取距离起始点的分钟数
-                var currentTime = getTimeFromBeginning(options.scaleRange[0], time * options.perMinute);
-                globe.currentTime = currentTime;
-
-                options.hourChange();
-            } else {
-                $pointer.animate({left: d + options.scalesWidth}, options.animateTime, function () {
+        if (options.arrangeType == 'h') {
+            var d = parseInt($pointer.css('left'));
+            if (options.timeType == 'xx:xx') {
+                var star = getTimeFromZeroMenute(options.scaleRange[0]);
+                var stop = getTimeFromZeroMenute(options.stopTime);
+                var s = (stop - star) / options.perMinute;
+                if (d >= s * options.scalesWidth - $pointer.width()) {
+                    $pointer.css({left: options.scalesWidth});
                     d = parseInt($pointer.css('left'));
                     var time = parseInt(d / options.scalesWidth) - 1;// 控件，处理为小时
+
                     // console.log(time * options.perMinute);//获取距离起始点的分钟数
                     var currentTime = getTimeFromBeginning(options.scaleRange[0], time * options.perMinute);
                     globe.currentTime = currentTime;
-                    options.hourChange();
-                });
-            }
-        } else if (options.timeType == 'number') {
-            var s = (options.stopTime - options.scaleRange[0]) / options.perValue;
-            if (d >= s * options.scalesWidth - $pointer.width()) {
-                $pointer.css({left: options.scalesWidth});
-                d = parseInt($pointer.css('left'));
-                var time = parseInt(d / options.scalesWidth) - 1;// 控件，处理为小时
 
-                globe.currentTime = options.scaleRange[0] + time * options.perValue;
-                options.hourChange();
-            } else {
-                $pointer.animate({left: d + options.scalesWidth}, options.animateTime, function () {
+                    options.hourChange();
+                } else {
+                    $pointer.animate({left: d + options.scalesWidth}, options.animateTime, function () {
+                        d = parseInt($pointer.css('left'));
+                        var time = parseInt(d / options.scalesWidth) - 1;// 控件，处理为小时
+                        // console.log(time * options.perMinute);//获取距离起始点的分钟数
+                        var currentTime = getTimeFromBeginning(options.scaleRange[0], time * options.perMinute);
+                        globe.currentTime = currentTime;
+                        options.hourChange();
+                    });
+                }
+            } else if (options.timeType == 'number') {
+                var s = (options.stopTime - options.scaleRange[0]) / options.perValue;
+                if (d >= s * options.scalesWidth - $pointer.width()) {
+                    $pointer.css({left: options.scalesWidth});
                     d = parseInt($pointer.css('left'));
                     var time = parseInt(d / options.scalesWidth) - 1;// 控件，处理为小时
+
                     globe.currentTime = options.scaleRange[0] + time * options.perValue;
                     options.hourChange();
-                });
+                } else {
+                    $pointer.animate({left: d + options.scalesWidth}, options.animateTime, function () {
+                        d = parseInt($pointer.css('left'));
+                        var time = parseInt(d / options.scalesWidth) - 1;// 控件，处理为小时
+                        globe.currentTime = options.scaleRange[0] + time * options.perValue;
+                        options.hourChange();
+                    });
+                }
+            }
+        } else {
+            var d = parseInt($pointer.css('top'));
+            if (options.timeType == 'xx:xx') {
+                var star = getTimeFromZeroMenute(options.scaleRange[0]);
+                var stop = getTimeFromZeroMenute(options.stopTime);
+                var s = (stop - star) / options.perMinute;
+                if (d >= s * options.scalesWidth - $pointer.width()) {
+                    $pointer.css({top: options.scalesWidth});
+                    d = parseInt($pointer.css('top'));
+                    var time = parseInt(d / options.scalesWidth) - 1;// 控件，处理为小时
+
+                    // console.log(time * options.perMinute);//获取距离起始点的分钟数
+                    var currentTime = getTimeFromBeginning(options.scaleRange[0], time * options.perMinute);
+                    globe.currentTime = currentTime;
+
+                    options.hourChange();
+                } else {
+                    $pointer.animate({top: d + options.scalesWidth}, options.animateTime, function () {
+                        d = parseInt($pointer.css('top'));
+                        var time = parseInt(d / options.scalesWidth) - 1;// 控件，处理为小时
+                        // console.log(time * options.perMinute);//获取距离起始点的分钟数
+                        var currentTime = getTimeFromBeginning(options.scaleRange[0], time * options.perMinute);
+                        globe.currentTime = currentTime;
+                        options.hourChange();
+                    });
+                }
+            } else if (options.timeType == 'number') {
+                var s = (options.stopTime - options.scaleRange[0]) / options.perValue;
+                if (d >= s * options.scalesWidth - $pointer.width()) {
+                    $pointer.css({top: options.scalesWidth});
+                    d = parseInt($pointer.css('top'));
+                    var time = parseInt(d / options.scalesWidth) - 1;// 控件，处理为小时
+
+                    globe.currentTime = options.scaleRange[0] + time * options.perValue;
+                    options.hourChange();
+                } else {
+                    $pointer.animate({top: d + options.scalesWidth}, options.animateTime, function () {
+                        d = parseInt($pointer.css('top'));
+                        var time = parseInt(d / options.scalesWidth) - 1;// 控件，处理为小时
+                        globe.currentTime = options.scaleRange[0] + time * options.perValue;
+                        options.hourChange();
+                    });
+                }
             }
         }
+
     }
 
     /**
