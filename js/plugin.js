@@ -432,7 +432,7 @@
                 d.left = repair(d.left);
                 function repair(v) {
                     var r = parseInt(v / options.scalesWidth) * options.scalesWidth;
-                    if (Math.abs(v % options.scalesWidth) > 10) {
+                    if (Math.abs(v % options.scalesWidth) > 5) {
                         r += v > 0 ? options.scalesWidth : -options.scalesWidth;
                     }
                     return r;
@@ -441,7 +441,7 @@
 
             onStopDrag: function (e) {
                 var d = e.data;
-                var time = parseInt((d.left + $(d.target).width()) / options.scalesWidth) - 1;// 控件，处理为小时
+                var time = parseInt((d.left + $(d.target).width()) / options.scalesWidth) - 2 ;// 控件，处理为小时
                 if (options.timeType == 'xx:xx') {
                     // console.log(time * options.perMinute);//获取距离起始点的分钟数
                     var currentTime = getTimeFromBeginning(options.scaleRange[0], time * options.perMinute);
