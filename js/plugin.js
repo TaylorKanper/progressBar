@@ -172,13 +172,8 @@
         $this.find("#play i").unbind("click");
         $this.find("#nex i").unbind("click");
         $this.find("#pre i").unbind("click");
-        if (options.timeType == 'xx:xx') {
-            obj.stopTime = getTimeFromZeroMenute(obj.stopTime) + options.perMinute;
-            obj.stopTime = getTimeFromMinute(obj.stopTime);
-        } else {
-            obj.stopTime = obj.stopTime + options.perValue;
-        }
 
+        options.reSet = true;
         options.stopTime = obj.stopTime;
         dragPoint($this, options);
         bindEvent($this, options);
@@ -421,10 +416,13 @@
                 if (options.timeType == 'xx:xx') {
                     var star = getTimeFromZeroMenute(options.scaleRange[0]);
                     var stop = getTimeFromZeroMenute(options.stopTime);
+                    if (options.reSet) {
+                        stop += options.perMinute;
+                    }
                     var s = (stop - star) / options.perMinute;
                     dis = s * options.scalesWidth;
                 } else if (options.timeType == 'number') {
-                    var s = (options.stopTime - options.scaleRange[0]) / options.perValue;
+                    var s = options.reSet == true ? (options.stopTime - options.scaleRange[0]) / options.perValue + 1 : (options.stopTime - options.scaleRange[0]) / options.perValue;
                     dis = s * options.scalesWidth;
                 }
 
@@ -577,6 +575,9 @@
             if (options.timeType == 'xx:xx') {
                 var star = getTimeFromZeroMenute(options.scaleRange[0]);
                 var stop = getTimeFromZeroMenute(options.stopTime);
+                if (options.reSet) {
+                    stop += options.perMinute;
+                }
                 var s = (stop - star) / options.perMinute;
                 if (d >= s * options.scalesWidth - $pointer.width()) {
                     $pointer.css({left: options.scalesWidth});
@@ -599,7 +600,7 @@
                     });
                 }
             } else if (options.timeType == 'number') {
-                var s = (options.stopTime - options.scaleRange[0]) / options.perValue;
+                var s = options.reSet == true ? (options.stopTime - options.scaleRange[0]) / options.perValue + 1 : (options.stopTime - options.scaleRange[0]) / options.perValue;
                 if (d >= s * options.scalesWidth - $pointer.width()) {
                     $pointer.css({left: options.scalesWidth});
                     d = parseInt($pointer.css('left'));
@@ -678,7 +679,7 @@
             var d = parseInt($pointer.css('left'));
             if (d <= options.scalesWidth) {
                 if (options.timeType == 'xx:xx') {
-                    var left = (getTimeFromZeroMenute(options.stopTime) - getTimeFromZeroMenute(options.scaleRange[0])) / options.perMinute;
+                    var left = options.reSet == true ? (getTimeFromZeroMenute(options.stopTime + options.perMinute) - getTimeFromZeroMenute(options.scaleRange[0])) / options.perMinute : (getTimeFromZeroMenute(options.stopTime) - getTimeFromZeroMenute(options.scaleRange[0])) / options.perMinute;
                     $pointer.css({left: left * options.scalesWidth});
                     d = parseInt($pointer.css('left'));
                     var time = parseInt(d / options.scalesWidth) - 1;// 控件，处理为小时
@@ -686,7 +687,7 @@
                     var currentTime = getTimeFromBeginning(options.scaleRange[0], time * options.perMinute);
                     globe.currentTime = currentTime;
                 } else {
-                    var left = (options.stopTime - options.scaleRange[0]) / options.perValue;
+                    var left = options.reSet == true ? (options.stopTime - options.scaleRange[0]) / options.perValue + 1 : (options.stopTime - options.scaleRange[0]) / options.perValue;
                     $pointer.css({left: left * options.scalesWidth});
                     d = parseInt($pointer.css('left'));
                     var time = parseInt(d / options.scalesWidth) - 1;// 控件，处理为小时
@@ -765,6 +766,9 @@
             if (options.timeType == 'xx:xx') {
                 var star = getTimeFromZeroMenute(options.scaleRange[0]);
                 var stop = getTimeFromZeroMenute(options.stopTime);
+                if (options.reSet) {
+                    stop += options.perMinute;
+                }
                 var s = (stop - star) / options.perMinute;
                 if (d >= s * options.scalesWidth - $pointer.width()) {
                     $pointer.css({left: options.scalesWidth});
@@ -787,7 +791,7 @@
                     });
                 }
             } else if (options.timeType == 'number') {
-                var s = (options.stopTime - options.scaleRange[0]) / options.perValue;
+                var s = options.reSet == true ? (options.stopTime - options.scaleRange[0]) / options.perValue + 1 : (options.stopTime - options.scaleRange[0]) / options.perValue;
                 if (d >= s * options.scalesWidth - $pointer.width()) {
                     $pointer.css({left: options.scalesWidth});
                     d = parseInt($pointer.css('left'));
