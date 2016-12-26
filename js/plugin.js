@@ -441,7 +441,7 @@
 
             onStopDrag: function (e) {
                 var d = e.data;
-                var time = parseInt((d.left + $(d.target).width()) / options.scalesWidth) - 2 ;// 控件，处理为小时
+                var time = parseInt((d.left + $(d.target).width()) / options.scalesWidth) - 2;// 控件，处理为小时
                 if (options.timeType == 'xx:xx') {
                     // console.log(time * options.perMinute);//获取距离起始点的分钟数
                     var currentTime = getTimeFromBeginning(options.scaleRange[0], time * options.perMinute);
@@ -578,7 +578,7 @@
                 if (options.reSet) {
                     stop += options.perMinute;
                 }
-                var s = (stop - star) / options.perMinute;
+                var s = (stop - star) / options.perMinute + 1;
                 if (d >= s * options.scalesWidth - $pointer.width()) {
                     $pointer.css({left: options.scalesWidth});
                     d = parseInt($pointer.css('left'));
@@ -600,7 +600,7 @@
                     });
                 }
             } else if (options.timeType == 'number') {
-                var s = options.reSet == true ? (options.stopTime - options.scaleRange[0]) / options.perValue + 1 : (options.stopTime - options.scaleRange[0]) / options.perValue;
+                var s = options.reSet == true ? (options.stopTime - options.scaleRange[0]) / options.perValue + 2 : (options.stopTime - options.scaleRange[0]) / options.perValue + 1;
                 if (d >= s * options.scalesWidth - $pointer.width()) {
                     $pointer.css({left: options.scalesWidth});
                     d = parseInt($pointer.css('left'));
@@ -758,7 +758,6 @@
      * @param options
      */
     function movePointRight($this, options) {
-
         var $pointer = $this.find("#pointer");
         $pointer.stop(false, true);
         if (options.arrangeType == 'h') {
@@ -769,7 +768,7 @@
                 if (options.reSet) {
                     stop += options.perMinute;
                 }
-                var s = (stop - star) / options.perMinute;
+                var s = (stop - star) / options.perMinute + 1;
                 if (d >= s * options.scalesWidth - $pointer.width()) {
                     $pointer.css({left: options.scalesWidth});
                     d = parseInt($pointer.css('left'));
@@ -813,7 +812,7 @@
             if (options.timeType == 'xx:xx') {
                 var star = getTimeFromZeroMenute(options.scaleRange[0]);
                 var stop = getTimeFromZeroMenute(options.stopTime);
-                var s = (stop - star) / options.perMinute;
+                var s = (stop - star) / options.perMinute + 1;
                 if (d >= s * options.scalesWidth - $pointer.width()) {
                     $pointer.css({top: options.scalesWidth});
                     d = parseInt($pointer.css('top'));
@@ -835,7 +834,7 @@
                     });
                 }
             } else if (options.timeType == 'number') {
-                var s = (options.stopTime - options.scaleRange[0]) / options.perValue;
+                var s = (options.stopTime - options.scaleRange[0]) / options.perValue + 1;
                 if (d >= s * options.scalesWidth - $pointer.width()) {
                     $pointer.css({top: options.scalesWidth});
                     d = parseInt($pointer.css('top'));
