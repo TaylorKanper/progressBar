@@ -679,7 +679,7 @@
             var d = parseInt($pointer.css('left'));
             if (d <= options.scalesWidth) {
                 if (options.timeType == 'xx:xx') {
-                    var left = options.reSet == true ? (getTimeFromZeroMenute(options.stopTime + options.perMinute) - getTimeFromZeroMenute(options.scaleRange[0])) / options.perMinute : (getTimeFromZeroMenute(options.stopTime) - getTimeFromZeroMenute(options.scaleRange[0])) / options.perMinute;
+                    var left = options.reSet == true ? (getTimeFromZeroMenute(options.stopTime) + options.perMinute - getTimeFromZeroMenute(options.scaleRange[0])) / options.perMinute : (getTimeFromZeroMenute(options.stopTime) - getTimeFromZeroMenute(options.scaleRange[0])) / options.perMinute;
                     $pointer.css({left: left * options.scalesWidth});
                     d = parseInt($pointer.css('left'));
                     var time = parseInt(d / options.scalesWidth) - 1;// 控件，处理为小时
